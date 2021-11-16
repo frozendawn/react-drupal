@@ -23,7 +23,6 @@ const style = {
 
 const PageLayout = () => {
   const [curPage, setCurPage] = useState(0);
-  const [data, setData] = useState([]);
   const [storedData, setStoredData] = useState([]);
   const [totalData, setTotalData] = useState(0);
   const fetchLimit = 3;
@@ -44,11 +43,7 @@ const PageLayout = () => {
     response = await fetch(`${url}?page=${curPage}`);
 
     const data = await response.json();
-    //console.log("fetched Data for a page", data);
-    if (data.length === 0) {
-      setData([]);
-      return;
-    }
+
     //console.log("logging data", data);
 
     const convertedData = [];
@@ -63,8 +58,6 @@ const PageLayout = () => {
       });
     }
 
-    //console.log("logging converted data", convertedData);
-    setData(convertedData);
 
     setStoredData((prevState) => {
       let updatedArray = [...prevState, ...convertedData];
@@ -89,7 +82,6 @@ const PageLayout = () => {
   };
 
   const deleteDataHandler = (e) => {
-    setData([]);
     setStoredData([]);
   };
 
@@ -123,7 +115,6 @@ const PageLayout = () => {
       fetchData();
     }
     else if (curPage > 0) {
-      setData([]);
       fetchData();
     }
 
@@ -154,7 +145,6 @@ const PageLayout = () => {
           <Grid item>
             <MagicalButton
               onClickHandler={loadMoreHandler}
-              data={data}
               currentPage={curPage}
               remaining={remaining}
               fetchLimit={fetchLimit}

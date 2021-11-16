@@ -2,8 +2,9 @@ import { Grid } from "@mui/material";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
+import Error from "./Error";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRef } from "react";
 
 const NewCard = (props) => {
@@ -15,13 +16,96 @@ const NewCard = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  //reset form fields function
-  const resetFields = () => {
-    firstNameRef.current.value = "";
-    lastNameRef.current.value = "";
-    emailRef.current.value = "";
-    descriptionRef.current.value = "";
-  };
+  const [error, setError] = useState(null);
+
+  //validation
+  const [emailInput,setEmailInput] = useState('');
+  const [emailIsValid,setEmailIsValid] = useState(false);
+  const [emailIsTouched,setEmailIsTouched] = useState(false);
+
+  console.log('logging emailIsTouched',emailIsTouched);
+
+  const [firstNameInput,setFirstNameInput] = useState('');
+  const [firstNameIsValid,setFirstNameIsValid] = useState(false);
+
+  const [lastNameInput,setLastNameInput] = useState('');
+  const [lastNameIsValid,setLastNameIsValid] = useState(false);
+
+  const [descriptionInput,setDescriptionInput] = useState('');
+  const [descriptionIsValid,setDescriptionIsValid] = useState(false);
+
+
+  const [formIsValid,setFormIsValid] = useState(false);
+
+
+  const updateEmailHandler = () => {
+    setEmailInput(emailRef.current.value)
+  }
+  const updateFirstNameHandler = () => {
+    setFirstNameInput(firstNameRef.current.value)
+  }
+  const updateLastNameHandler = () => {
+    setLastNameInput(lastNameRef.current.value)
+  }
+  const updateDescriptionHandler = () => {
+    setDescriptionInput(descriptionRef.current.value)
+  }
+
+ 
+    
+
+
+  useEffect( () => {
+    const checkFieldsValidity = () => {
+      console.log('checking input validities')
+      if(emailInput.includes('@') && emailIsTouched){
+        setEmailIsValid(true);
+      }
+      else {
+        setEmailIsValid(false);
+      }
+  
+      if(firstNameInput.trim().length > 0 ){
+        setFirstNameIsValid(true);
+      }
+      else {
+        setFirstNameIsValid(false);
+      }
+  
+      if(lastNameInput.trim().length > 0 ){
+        setLastNameIsValid(true);
+      }
+      else {
+        setLastNameIsValid(false);
+      }
+  
+      if(descriptionInput.trim().length > 0){
+        setDescriptionIsValid(true);
+      } else {
+        setDescriptionIsValid(false);
+      }
+    };
+
+    
+
+    const timeOut = setTimeout(checkFieldsValidity,200)
+
+    return () => {
+      clearTimeout(timeOut)
+    }
+
+  },[emailInput,firstNameInput,lastNameInput,descriptionInput])
+
+  useEffect( () => {
+    console.log('checking if fields are valid to enable button')
+    if (emailIsValid && firstNameIsValid && lastNameIsValid & descriptionIsValid) {
+      setFormIsValid(true);
+    } else {
+      setFormIsValid(false);
+    }
+  },[emailIsValid,firstNameIsValid,lastNameIsValid,descriptionIsValid])
+  
+  
 
   //submit form handler
   const submitFormHandler = async (e) => {
@@ -52,18 +136,22 @@ const NewCard = (props) => {
             })
           }
         );
-
-        console.log('logging response from server while creating new card',response)
+        const data = await response.json();
+        console.log('logging response from server while creating new card',response);
+        console.log('logging only errors',data.errors)
+        console.log('logging data from response',data);
         if(response.ok){
           if(props.currentPage === 0){
             props.removeData();
             props.fetchData();
             props.resetTotalData();
+            props.close();
           }
 
           props.resetPage();
         }
         if(response.ok !== true){
+          setError(data.errors)
           setIsLoading(false);
           throw new Error('Server returned response.ok !== true')
         }
@@ -73,11 +161,8 @@ const NewCard = (props) => {
         console.log(error);
       }
       finally {
-        //resetFields();
-        props.close();
+
       }
-
-
     
   };
 
@@ -95,16 +180,20 @@ const NewCard = (props) => {
     </Grid>
   ) : (
     <Grid
-     // sx={{ mt: 10 }}
       container
       direction="column"
       justifyContent="center"
       alignItems="center"
     >
+        <Error error={error}/>
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
+           error={emailIsValid && emailIsTouched ? false : true}
+            onChange={updateEmailHandler}
+            onBlur={ () => setEmailIsTouched(true)}
             inputRef={emailRef}
+            value={emailInput}
             id="standard-basic"
             label="Email"
             variant="standard"
@@ -112,7 +201,10 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={firstNameIsValid ? false : true}
             inputRef={firstNameRef}
+            onChange={updateFirstNameHandler}
+            value={firstNameInput}
             id="standard-basic"
             label="First Name"
             variant="standard"
@@ -120,7 +212,10 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={lastNameIsValid ? false : true}
             inputRef={lastNameRef}
+            onChange={updateLastNameHandler}
+            value={lastNameInput}
             id="standard-basic"
             label="Last name"
             variant="standard"
@@ -128,14 +223,17 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            error={descriptionIsValid ? false : true}
             inputRef={descriptionRef}
+            onChange={updateDescriptionHandler}
+            value={descriptionInput}
             id="standard-basic"
             label="Description"
             variant="standard"
           />
         </Grid>
         <Grid item xs={12}>
-          <Button type="submit" variant="contained" sx={{ mt: 2 }}>
+          <Button type="submit" variant="contained" disabled={formIsValid ? false : true} sx={{ mt: 2 }}>
             Submit
           </Button>
         </Grid>
