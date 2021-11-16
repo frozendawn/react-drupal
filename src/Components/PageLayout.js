@@ -78,8 +78,6 @@ const PageLayout = () => {
     const response = await fetch("http://localhost:8080/api/total_data");
     const data = await response.json();
     setTotalData(data.total);
-
-    console.log("fetch total data useEffect");
   };
 
   useEffect(() => {
@@ -94,10 +92,6 @@ const PageLayout = () => {
     setData([]);
     setStoredData([]);
   };
-
-  /*   const handleChange = (event, value) => {
-    setCurPage(value);
-  }; */
 
   const loadMoreHandler = (e) => {
     setRemaining((prevState) => {
@@ -123,15 +117,21 @@ const PageLayout = () => {
 
   //fetch data for current page
   useEffect(() => {
-    console.log("useEffect ran in current page");
-    fetchData();
+    
+    if(curPage === 0){
+      setStoredData([]);
+      fetchData();
+    }
+    else if (curPage > 0) {
+      setData([]);
+      fetchData();
+    }
+
   }, [curPage]);
 
   return (
     <div>
       <Grid container justifyContent="center" alignItems="center" spacing={3} sx={{mt:5}}>
-
-
 
       <Grid container spacing={3}>
         {storedData.map((el) => {

@@ -7,13 +7,15 @@ import { useState } from "react";
 import { useRef } from "react";
 
 const NewCard = (props) => {
+  //form refs
   const emailRef = useRef();
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const descriptionRef = useRef();
+
   const [isLoading, setIsLoading] = useState(false);
 
-
+  //reset form fields function
   const resetFields = () => {
     firstNameRef.current.value = "";
     lastNameRef.current.value = "";
@@ -21,6 +23,7 @@ const NewCard = (props) => {
     descriptionRef.current.value = "";
   };
 
+  //submit form handler
   const submitFormHandler = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -52,19 +55,13 @@ const NewCard = (props) => {
 
         console.log('logging response from server while creating new card',response)
         if(response.ok){
-          console.log('page', props.currentPage)
-          if(props.currentPage === 0) {
+          if(props.currentPage === 0){
             props.removeData();
-            props.resetTotalData();
             props.fetchData();
-            setIsLoading(false);
-          }
-          else{
-            props.removeData();
-            props.resetPage();
-            setIsLoading(false);
+            props.resetTotalData();
           }
 
+          props.resetPage();
         }
         if(response.ok !== true){
           setIsLoading(false);
@@ -76,10 +73,8 @@ const NewCard = (props) => {
         console.log(error);
       }
       finally {
-        resetFields();
+        //resetFields();
         props.close();
-        //props.showForm();
-        //props.fetchData();
       }
 
 

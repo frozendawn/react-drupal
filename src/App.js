@@ -1,7 +1,5 @@
 import "./App.css";
 import { Switch, Route } from "react-router-dom";
-
-
 import PageLayout from "./Components/PageLayout";
 import { Container } from "@mui/material";
 import CardDetail from "./Components/CardDetail";
