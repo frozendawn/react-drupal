@@ -5,6 +5,7 @@ import Spinner from "./Spinner";
 import Error from "./Error";
 
 import { useEffect, useState } from "react";
+import validator from 'validator'
 
 const NewCard = (props) => {
 
@@ -15,160 +16,73 @@ const NewCard = (props) => {
 
   //New Try
 
-  const [formFieldValues,setFormFieldValues] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    description: ''
-  })
+  const [formFieldValues, setFormFieldValues] = useState({})
   console.log('logging formFieldValues',formFieldValues)
 
-  const [invalidFields, setInvalidFields] = useState([]);
-  const [isTouchedArr, setIsTouchedArr] = useState([]);
-  console.log('logging isTouchedArr ',isTouchedArr);
+  const [invalidFields, setInvalidFields] = useState({});
+
   console.log('logging invalidFields ',invalidFields)
+
+  const updateEmail = (email) => {
+      console.log('logging validator email true or false', validator.isEmail(email))
+      console.log('logging current email value ',email);
+
+    if( email && validator.isEmail(email)){
+      console.log('im in email is correct if')
+      setInvalidFields( prevState => {
+        let newState = {...prevState, email: null};
+        return newState;
+      })
+    } else {
+      console.log('im in else case of update function')
+      if(invalidFields[email]){
+        return
+      } else {
+        setInvalidFields(prevState => {
+          let newState = {...prevState, email: 'email is invalid'};
+          return newState
+        });
+      }
+    }
+  }
+
+const checkIfInputIsEmpty = (str,name) => {
+  if(str && str.length > 0){
+    setInvalidFields( prevState => {
+      let newState = {...prevState, [name]: null};
+      return newState;
+    })
+  } else {
+    setInvalidFields(prevState => {
+      let newState = {...prevState, [name]: `${name} is invalid`};
+      return newState
+    });
+  }
+}
 
   const setValuesOnBlurHandler = (e) => {
     setFormFieldValues(prevState => {
-      let newState;
-      newState = {...prevState}
-      newState[e.target.name] = e.target.value;
-      return newState
+      return { ...prevState, [e.target.name]: e.target.value }
     })
 
-    console.log('logging event target name',e.target.name)
-    if (isTouchedArr.includes(e.target.name)){
-      return
-    } else {
-      setIsTouchedArr( prevState => {
-        let newState = [...prevState];
-        newState.push(e.target.name);
-        return newState;
-      })
+    if(e.target.name === 'email') {
+      updateEmail(e.target.value);
     }
 
+    if(e.target.name !== 'email') {
+      checkIfInputIsEmpty(e.target.value,e.target.name)
+    }
   }
-
-  useEffect( () => {
-    //check if email is valid
-    if(formFieldValues.email.includes('@')){
-      const foundIdx = invalidFields.findIndex( el => el === 'email')
-      if(foundIdx > -1) {
-        setInvalidFields( prevState => {
-          let newState = [...prevState];
-          newState.splice(foundIdx,1);
-          return newState;
-        })
-      }
-
-    } else {
-      const foundIdx = invalidFields.findIndex( el => el === 'email');
-      const foundItem = invalidFields[foundIdx];
-      if(foundItem) {
-        return;
-      } else {
-        setInvalidFields( prevState => {
-          let newState = [...prevState];
-          newState.push('email')
-          return newState;
-        })
-      }
-    }
-
-  },[formFieldValues.email,invalidFields])
-
-  useEffect( () => {
-      //check if firstName is valid
-   if(formFieldValues.firstName.trim().length > 0){
-   const foundIdx = invalidFields.findIndex( el => el === 'firstName')
-   if(foundIdx > -1) {
-     setInvalidFields( prevState => {
-       let newState = [...prevState];
-       newState.splice(foundIdx,1);
-       return newState;
-     })
-   }
-
- } else {
-   const foundIdx = invalidFields.findIndex( el => el === 'firstName');
-   const foundItem = invalidFields[foundIdx];
-   if(foundItem) {
-     return;
-   } else {
-     setInvalidFields( prevState => {
-       let newState = [...prevState];
-       newState.push('firstName')
-       return newState;
-     })
-   }
- }
-  
-  },[formFieldValues.firstName,invalidFields])
-
-  useEffect( () => {
-  //check if lastName is valid
- if(formFieldValues.lastName.trim().length > 0){
- const foundIdx = invalidFields.findIndex( el => el === 'lastName')
- if(foundIdx > -1) {
-   setInvalidFields( prevState => {
-     let newState = [...prevState];
-     newState.splice(foundIdx,1);
-     return newState;
-   })
- }
-
-} else {
- const foundIdx = invalidFields.findIndex( el => el === 'lastName');
- const foundItem = invalidFields[foundIdx];
- if(foundItem) {
-   return;
- } else {
-   setInvalidFields( prevState => {
-     let newState = [...prevState];
-     newState.push('lastName')
-     return newState;
-   })
- }
-}
-
-},[formFieldValues.lastName,invalidFields])
-
-useEffect( () => {
-  //check if lastName is valid
- if(formFieldValues.description.trim().length > 0){
- const foundIdx = invalidFields.findIndex( el => el === 'description')
- if(foundIdx > -1) {
-   setInvalidFields( prevState => {
-     let newState = [...prevState];
-     newState.splice(foundIdx,1);
-     return newState;
-   })
- }
-
-} else {
- const foundIdx = invalidFields.findIndex( el => el === 'description');
- const foundItem = invalidFields[foundIdx];
- if(foundItem) {
-   return;
- } else {
-   setInvalidFields( prevState => {
-     let newState = [...prevState];
-     newState.push('description')
-     return newState;
-   })
- }
-}
-
-},[formFieldValues.description,invalidFields])
 
 // set form is valid use effect
   useEffect( () => {
-   if(invalidFields.length === 0){
-     setFormIsValid(true);
-   }else {
-     setFormIsValid(false);
-   }
-   console.log(formIsValid);
+   const arr = Object.values(invalidFields)
+   const allEqual = arr => arr.every( v => v === arr[0] )
+    if(allEqual(arr) && arr.length === 4){
+      setFormIsValid(true)
+    } else {
+      setFormIsValid(false)
+    }
   },[invalidFields])
 
   //submit form handler
@@ -211,7 +125,7 @@ useEffect( () => {
             props.resetTotalData();
             props.close();
           }
-
+          props.close();
           props.resetPage();
         }
         if(response.ok !== true){
@@ -250,7 +164,7 @@ useEffect( () => {
         <Grid item xs={12}>
           <TextField
             name="email"
-            error={invalidFields.includes('email') && isTouchedArr.includes('email') ? true : false}
+            error={invalidFields.email ? true : false}
             onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Email"
@@ -260,7 +174,7 @@ useEffect( () => {
         <Grid item xs={12}>
           <TextField
             name="firstName"
-            error={invalidFields.includes('firstName') && isTouchedArr.includes('firstName') ? true : false}
+            error={invalidFields.firstName ? true : false}
             onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="First Name"
@@ -270,7 +184,7 @@ useEffect( () => {
         <Grid item xs={12}>
           <TextField
             name="lastName"
-            error={invalidFields.includes('lastName') && isTouchedArr.includes('lastName') ? true : false}
+            error={invalidFields.lastName ? true : false}
             onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Last name"
@@ -280,7 +194,7 @@ useEffect( () => {
         <Grid item xs={12}>
           <TextField
             name="description"
-            error={invalidFields.includes('description') && isTouchedArr.includes('description') ? true : false}
+            error={invalidFields.description ? true : false}
             onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Description"

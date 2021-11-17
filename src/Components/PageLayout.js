@@ -29,7 +29,6 @@ const PageLayout = () => {
   const [remaining, setRemaining] = useState(0);
   let url = "http://localhost:8080/api/subscription";
   console.log("storedData ", storedData);
-  console.log("currentpage: ", curPage);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
