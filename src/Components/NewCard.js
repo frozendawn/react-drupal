@@ -5,107 +5,171 @@ import Spinner from "./Spinner";
 import Error from "./Error";
 
 import { useEffect, useState } from "react";
-import { useRef } from "react";
 
 const NewCard = (props) => {
-  //form refs
-  const emailRef = useRef();
-  const firstNameRef = useRef();
-  const lastNameRef = useRef();
-  const descriptionRef = useRef();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
 
   const [error, setError] = useState(null);
 
-  //validation
-  const [emailInput,setEmailInput] = useState('');
-  const [emailIsValid,setEmailIsValid] = useState(false);
-  const [emailIsTouched,setEmailIsTouched] = useState(false);
+  //New Try
 
-  console.log('logging emailIsTouched',emailIsTouched);
+  const [formFieldValues,setFormFieldValues] = useState({
+    email: '',
+    firstName: '',
+    lastName: '',
+    description: ''
+  })
+  console.log('logging formFieldValues',formFieldValues)
 
-  const [firstNameInput,setFirstNameInput] = useState('');
-  const [firstNameIsValid,setFirstNameIsValid] = useState(false);
+  const [invalidFields, setInvalidFields] = useState([]);
+  const [isTouchedArr, setIsTouchedArr] = useState([]);
+  console.log('logging isTouchedArr ',isTouchedArr);
+  console.log('logging invalidFields ',invalidFields)
 
-  const [lastNameInput,setLastNameInput] = useState('');
-  const [lastNameIsValid,setLastNameIsValid] = useState(false);
+  const setValuesOnBlurHandler = (e) => {
+    setFormFieldValues(prevState => {
+      let newState;
+      newState = {...prevState}
+      newState[e.target.name] = e.target.value;
+      return newState
+    })
 
-  const [descriptionInput,setDescriptionInput] = useState('');
-  const [descriptionIsValid,setDescriptionIsValid] = useState(false);
-
-
-  const [formIsValid,setFormIsValid] = useState(false);
-
-
-  const updateEmailHandler = () => {
-    setEmailInput(emailRef.current.value)
-  }
-  const updateFirstNameHandler = () => {
-    setFirstNameInput(firstNameRef.current.value)
-  }
-  const updateLastNameHandler = () => {
-    setLastNameInput(lastNameRef.current.value)
-  }
-  const updateDescriptionHandler = () => {
-    setDescriptionInput(descriptionRef.current.value)
-  }
-
- 
-    
-
-
-  useEffect( () => {
-    const checkFieldsValidity = () => {
-      console.log('checking input validities')
-      if(emailInput.includes('@') && emailIsTouched){
-        setEmailIsValid(true);
-      }
-      else {
-        setEmailIsValid(false);
-      }
-  
-      if(firstNameInput.trim().length > 0 ){
-        setFirstNameIsValid(true);
-      }
-      else {
-        setFirstNameIsValid(false);
-      }
-  
-      if(lastNameInput.trim().length > 0 ){
-        setLastNameIsValid(true);
-      }
-      else {
-        setLastNameIsValid(false);
-      }
-  
-      if(descriptionInput.trim().length > 0){
-        setDescriptionIsValid(true);
-      } else {
-        setDescriptionIsValid(false);
-      }
-    };
-
-    
-
-    const timeOut = setTimeout(checkFieldsValidity,200)
-
-    return () => {
-      clearTimeout(timeOut)
-    }
-
-  },[emailInput,firstNameInput,lastNameInput,descriptionInput])
-
-  useEffect( () => {
-    console.log('checking if fields are valid to enable button')
-    if (emailIsValid && firstNameIsValid && lastNameIsValid & descriptionIsValid) {
-      setFormIsValid(true);
+    console.log('logging event target name',e.target.name)
+    if (isTouchedArr.includes(e.target.name)){
+      return
     } else {
-      setFormIsValid(false);
+      setIsTouchedArr( prevState => {
+        let newState = [...prevState];
+        newState.push(e.target.name);
+        return newState;
+      })
     }
-  },[emailIsValid,firstNameIsValid,lastNameIsValid,descriptionIsValid])
+
+  }
+
+  useEffect( () => {
+    //check if email is valid
+    if(formFieldValues.email.includes('@')){
+      const foundIdx = invalidFields.findIndex( el => el === 'email')
+      if(foundIdx > -1) {
+        setInvalidFields( prevState => {
+          let newState = [...prevState];
+          newState.splice(foundIdx,1);
+          return newState;
+        })
+      }
+
+    } else {
+      const foundIdx = invalidFields.findIndex( el => el === 'email');
+      const foundItem = invalidFields[foundIdx];
+      if(foundItem) {
+        return;
+      } else {
+        setInvalidFields( prevState => {
+          let newState = [...prevState];
+          newState.push('email')
+          return newState;
+        })
+      }
+    }
+
+  },[formFieldValues.email,invalidFields])
+
+  useEffect( () => {
+      //check if firstName is valid
+   if(formFieldValues.firstName.trim().length > 0){
+   const foundIdx = invalidFields.findIndex( el => el === 'firstName')
+   if(foundIdx > -1) {
+     setInvalidFields( prevState => {
+       let newState = [...prevState];
+       newState.splice(foundIdx,1);
+       return newState;
+     })
+   }
+
+ } else {
+   const foundIdx = invalidFields.findIndex( el => el === 'firstName');
+   const foundItem = invalidFields[foundIdx];
+   if(foundItem) {
+     return;
+   } else {
+     setInvalidFields( prevState => {
+       let newState = [...prevState];
+       newState.push('firstName')
+       return newState;
+     })
+   }
+ }
   
-  
+  },[formFieldValues.firstName,invalidFields])
+
+  useEffect( () => {
+  //check if lastName is valid
+ if(formFieldValues.lastName.trim().length > 0){
+ const foundIdx = invalidFields.findIndex( el => el === 'lastName')
+ if(foundIdx > -1) {
+   setInvalidFields( prevState => {
+     let newState = [...prevState];
+     newState.splice(foundIdx,1);
+     return newState;
+   })
+ }
+
+} else {
+ const foundIdx = invalidFields.findIndex( el => el === 'lastName');
+ const foundItem = invalidFields[foundIdx];
+ if(foundItem) {
+   return;
+ } else {
+   setInvalidFields( prevState => {
+     let newState = [...prevState];
+     newState.push('lastName')
+     return newState;
+   })
+ }
+}
+
+},[formFieldValues.lastName,invalidFields])
+
+useEffect( () => {
+  //check if lastName is valid
+ if(formFieldValues.description.trim().length > 0){
+ const foundIdx = invalidFields.findIndex( el => el === 'description')
+ if(foundIdx > -1) {
+   setInvalidFields( prevState => {
+     let newState = [...prevState];
+     newState.splice(foundIdx,1);
+     return newState;
+   })
+ }
+
+} else {
+ const foundIdx = invalidFields.findIndex( el => el === 'description');
+ const foundItem = invalidFields[foundIdx];
+ if(foundItem) {
+   return;
+ } else {
+   setInvalidFields( prevState => {
+     let newState = [...prevState];
+     newState.push('description')
+     return newState;
+   })
+ }
+}
+
+},[formFieldValues.description,invalidFields])
+
+// set form is valid use effect
+  useEffect( () => {
+   if(invalidFields.length === 0){
+     setFormIsValid(true);
+   }else {
+     setFormIsValid(false);
+   }
+   console.log(formIsValid);
+  },[invalidFields])
 
   //submit form handler
   const submitFormHandler = async (e) => {
@@ -126,11 +190,11 @@ const NewCard = (props) => {
               data: {
                 type: "subscription",
                 attributes: {
-                  field_first_name: firstNameRef.current.value,
-                  field_email: emailRef.current.value,
-                  title: firstNameRef.current.value,
-                  field_last_name: lastNameRef.current.value,
-                  field_description: descriptionRef.current.value,
+                  field_first_name: formFieldValues.firstName,
+                  field_email: formFieldValues.email,
+                  title: formFieldValues.firstName,
+                  field_last_name: formFieldValues.lastName,
+                  field_description: formFieldValues.description
                 },
               },
             })
@@ -160,10 +224,6 @@ const NewCard = (props) => {
       catch (error) {
         console.log(error);
       }
-      finally {
-
-      }
-    
   };
 
   return isLoading ? (
@@ -189,11 +249,9 @@ const NewCard = (props) => {
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
-           error={emailIsValid && emailIsTouched ? false : true}
-            onChange={updateEmailHandler}
-            onBlur={ () => setEmailIsTouched(true)}
-            inputRef={emailRef}
-            value={emailInput}
+            name="email"
+            error={invalidFields.includes('email') && isTouchedArr.includes('email') ? true : false}
+            onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Email"
             variant="standard"
@@ -201,10 +259,9 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={firstNameIsValid ? false : true}
-            inputRef={firstNameRef}
-            onChange={updateFirstNameHandler}
-            value={firstNameInput}
+            name="firstName"
+            error={invalidFields.includes('firstName') && isTouchedArr.includes('firstName') ? true : false}
+            onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="First Name"
             variant="standard"
@@ -212,10 +269,9 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={lastNameIsValid ? false : true}
-            inputRef={lastNameRef}
-            onChange={updateLastNameHandler}
-            value={lastNameInput}
+            name="lastName"
+            error={invalidFields.includes('lastName') && isTouchedArr.includes('lastName') ? true : false}
+            onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Last name"
             variant="standard"
@@ -223,10 +279,9 @@ const NewCard = (props) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
-            error={descriptionIsValid ? false : true}
-            inputRef={descriptionRef}
-            onChange={updateDescriptionHandler}
-            value={descriptionInput}
+            name="description"
+            error={invalidFields.includes('description') && isTouchedArr.includes('description') ? true : false}
+            onBlur={setValuesOnBlurHandler}
             id="standard-basic"
             label="Description"
             variant="standard"
