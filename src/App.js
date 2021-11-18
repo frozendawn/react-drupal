@@ -6,7 +6,6 @@ import CardDetail from "./Components/CardDetail";
 
 function App() {
 
-
   return (
     <div className="App">
 
@@ -16,7 +15,6 @@ function App() {
             <PageLayout />
           </Container>
         </Route>
-
 
         <Route path="/cards/:id" exact>
           <CardDetail/>

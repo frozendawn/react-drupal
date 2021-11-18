@@ -28,7 +28,6 @@ const PageLayout = () => {
   const fetchLimit = 3;
   const [remaining, setRemaining] = useState(0);
   let url = "http://localhost:8080/api/subscription";
-  console.log("storedData ", storedData);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -42,8 +41,6 @@ const PageLayout = () => {
     response = await fetch(`${url}?page=${curPage}`);
 
     const data = await response.json();
-
-    //console.log("logging data", data);
 
     const convertedData = [];
 
@@ -102,7 +99,6 @@ const PageLayout = () => {
 
   // Fetch total number of data
   useEffect(() => {
-    console.log("useEffect ran in total number of data");
     fetchDataValue();
   }, [curPage]);
 
