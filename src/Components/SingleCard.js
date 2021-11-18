@@ -1,68 +1,46 @@
-import { useHistory } from 'react-router';
+import { useHistory } from "react-router";
 
-
-import React from 'react';
-import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-
-
-
-
-  
-
-
+import React from "react";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 
 const SingleCard = (props) => {
+  let history = useHistory();
 
-    let history = useHistory();
+  const clickHandler = (e) => {
+    history.push({ 
+      pathname: `/cards/${props.id}`,
+      state: props
+     });
+  };
 
+  const card = (
+    <React.Fragment>
+      <CardContent>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          {props.created}
+        </Typography>
+        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+          {props.firstName} {props.lastName}
+        </Typography>
+      </CardContent>
+      <CardActions>
+        <Button size="small" onClick={clickHandler}>
+          Learn More
+        </Button>
+      </CardActions>
+    </React.Fragment>
+  );
 
-
-
-
-
-
-
-    const clickHandler = (e) => {
-        history.push(`/cards/${props.id}`);
-    }
-
-
-    const card = (
-        
-        <React.Fragment>
-          <CardContent>
-            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-              {props.created}
-            </Typography>
-            <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {props.firstName} {props.lastName}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button size="small" onClick={clickHandler}>Learn More</Button>
-          </CardActions>
-        </React.Fragment>
-      );
-
-
-
-
-
-
-
-
-
-
-    return (
-        <Box sx={{ minWidth: 275 }}>
-        <Card variant="outlined">{card}</Card>
-      </Box>
-    )
-}
+  return (
+    <Box sx={{ minWidth: 275 }}>
+      <Card variant="outlined">{card}</Card>
+    </Box>
+  );
+};
 
 export default SingleCard;

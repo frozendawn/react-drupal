@@ -17,24 +17,17 @@ const NewCard = (props) => {
   //New Try
 
   const [formFieldValues, setFormFieldValues] = useState({})
-  console.log('logging formFieldValues',formFieldValues)
 
   const [invalidFields, setInvalidFields] = useState({});
 
-  console.log('logging invalidFields ',invalidFields)
-
   const updateEmail = (email) => {
-      console.log('logging validator email true or false', validator.isEmail(email))
-      console.log('logging current email value ',email);
 
     if( email && validator.isEmail(email)){
-      console.log('im in email is correct if')
       setInvalidFields( prevState => {
         let newState = {...prevState, email: null};
         return newState;
       })
     } else {
-      console.log('im in else case of update function')
       if(invalidFields[email]){
         return
       } else {
@@ -115,9 +108,6 @@ const checkIfInputIsEmpty = (str,name) => {
           }
         );
         const data = await response.json();
-        console.log('logging response from server while creating new card',response);
-        console.log('logging only errors',data.errors)
-        console.log('logging data from response',data);
         if(response.ok){
           if(props.currentPage === 0){
             props.removeData();
@@ -129,7 +119,6 @@ const checkIfInputIsEmpty = (str,name) => {
           props.resetPage();
         }
         if(response.ok !== true){
-          console.log('im in response !== true')
           setIsLoading(false);
           setError(data.errors)
           throw new Error('Server returned response.ok !== true ',data.errors)
