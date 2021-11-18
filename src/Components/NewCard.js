@@ -129,9 +129,10 @@ const checkIfInputIsEmpty = (str,name) => {
           props.resetPage();
         }
         if(response.ok !== true){
-          setError(data.errors)
+          console.log('im in response !== true')
           setIsLoading(false);
-          throw new Error('Server returned response.ok !== true')
+          setError(data.errors)
+          throw new Error('Server returned response.ok !== true ',data.errors)
         }
 
       }
@@ -159,7 +160,11 @@ const checkIfInputIsEmpty = (str,name) => {
       justifyContent="center"
       alignItems="center"
     >
-        <Error error={error}/>
+        {error && error.map((err, idx) => {
+          return (
+            <Error key={idx} error={err.detail}/>
+          )
+        })}
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
