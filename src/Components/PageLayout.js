@@ -63,10 +63,10 @@ const PageLayout = () => {
 
   // fetch total amount of data function
 
-  const fetchDataValue = async () => {
-    const response = await fetch("http://localhost:8080/api/total_data");
-    const data = await response.json();
-    setTotalData(data.total);
+  const fetchDataValue = () => {
+     fetch("http://localhost:8080/api/total_data")
+    .then(data => data.json())
+    .then(data => setTotalData(data.total))
   };
 
   useEffect(() => {
