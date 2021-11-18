@@ -35,30 +35,28 @@ const PageLayout = () => {
 
   // fetchData function
 
-  const fetchData = async () => {
-    let response;
+  const fetchData = () => {
+     fetch(`${url}?page=${curPage}`)
+     .then( data => data.json() )
+     .then( data => {
+      const convertedData = [];
 
-    response = await fetch(`${url}?page=${curPage}`);
-
-    const data = await response.json();
-
-    const convertedData = [];
-
-    for (let key in data) {
-      convertedData.push({
-        id: data[key].nid,
-        created: data[key].created,
-        firstName: data[key].title,
-        lastName: data[key].field_last_name,
-        description: data[key].field_description,
+      for (let key in data) {
+        convertedData.push({
+          id: data[key].nid,
+          created: data[key].created,
+          firstName: data[key].title,
+          lastName: data[key].field_last_name,
+          description: data[key].field_description,
+        });
+      }
+  
+  
+      setStoredData((prevState) => {
+        let updatedArray = [...prevState, ...convertedData];
+        return updatedArray;
       });
-    }
-
-
-    setStoredData((prevState) => {
-      let updatedArray = [...prevState, ...convertedData];
-      return updatedArray;
-    });
+     })
   };
 
   // fetch total amount of data function
