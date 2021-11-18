@@ -12,18 +12,18 @@ const CardDetail = () => {
   const [foundCard, setFoundCard] = useState(location.state);
 
   return (
-    <Grid container justifyContent="center" alignItems="center">
-      <Card sx={{ maxWidth: 345 }}>
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {foundCard.firstName} {foundCard.lastName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {foundCard.description}
-          </Typography>
-        </CardContent>
-      </Card>
-    </Grid>
+    foundCard ? <Grid container justifyContent="center" alignItems="center">
+    <Card sx={{ maxWidth: 345 }}>
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {foundCard.firstName} {foundCard.lastName}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {foundCard.description}
+        </Typography>
+      </CardContent>
+    </Card>
+  </Grid> : <Typography gutterBottom variant="p">Card not found. Please check the way you came to this page.</Typography>
   );
 };
 
