@@ -1,23 +1,32 @@
-import "./App.css";
 import { Switch, Route } from "react-router-dom";
 import PageLayout from "./Components/PageLayout";
-import { Container } from "@mui/material";
 import CardDetail from "./Components/CardDetail";
+import Login from './Components/Login';
+import Register from "./Components/Register";
 
 function App() {
 
   return (
-    <div className="App">
+    <div>
 
       <Switch>
         <Route path="/" exact>
-          <Container>
+          
             <PageLayout />
-          </Container>
+          
         </Route>
 
         <Route path="/cards/:id" exact>
           <CardDetail/>
+        </Route>
+
+
+        <Route path="/login" exact>
+          <Login/>
+        </Route>
+
+        <Route path="/register" exact>
+          <Register/>
         </Route>
 
       </Switch>

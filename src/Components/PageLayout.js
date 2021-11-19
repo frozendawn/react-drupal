@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import React from "react";
 import { Grid } from "@mui/material";
 import SingleCard from "./SingleCard";
@@ -7,7 +8,10 @@ import MagicalButton from "./MagicalButton";
 import NewCard from "./NewCard";
 
 import Box from "@mui/material/Box";
+import Alert from '@mui/material/Alert';
 import Modal from "@mui/material/Modal";
+import Navbar from "./Navbar";
+import { Container } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -33,6 +37,10 @@ const PageLayout = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+
+  const location = useLocation();
+  //console.log('logging location object in /',location)
+
   // fetchData function
 
   const fetchData = () => {
@@ -51,12 +59,12 @@ const PageLayout = () => {
         });
       }
   
-  
       setStoredData((prevState) => {
         let updatedArray = [...prevState, ...convertedData];
         return updatedArray;
       });
      })
+
   };
 
   // fetch total amount of data function
@@ -115,7 +123,15 @@ const PageLayout = () => {
 
   return (
     <div>
+      <Navbar/>
+      <Container>
       <Grid container justifyContent="center" alignItems="center" spacing={3} sx={{mt:5}}>
+
+      {location.state && location.state.message ? <Alert severity="success">{location.state.message}</Alert> : null}
+
+
+
+
 
       <Grid container spacing={3}>
         {storedData.map((el) => {
@@ -132,7 +148,6 @@ const PageLayout = () => {
           );
         })}
 </Grid>
-
 
         <Grid container justifyContent="center" alignItems="center">
           <Grid item>
@@ -172,6 +187,7 @@ const PageLayout = () => {
           />
         </Box>
       </Modal>
+      </Container>
     </div>
   );
 };
