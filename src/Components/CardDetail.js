@@ -8,9 +8,7 @@ import { Grid } from "@mui/material";
 
 const CardDetail = () => {
   let location = useLocation();
-
-  const [foundCard, setFoundCard] = useState(location.state);
-
+  const [foundCard, setFoundCard] = useState(location.state)
   return (
     foundCard ? <Grid container justifyContent="center" alignItems="center">
     <Card sx={{ maxWidth: 345 }}>

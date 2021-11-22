@@ -8,13 +8,17 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-const SingleCard = (props) => {
+const SingleCard = ({id,created,firstName,lastName,description}) => {
   let history = useHistory();
 
   const clickHandler = (e) => {
     history.push({ 
-      pathname: `/cards/${props.id}`,
-      state: props
+      pathname: `/cards/${id}`,
+      state: {
+        firstName:firstName,
+        lastName:lastName,
+        description:description,
+      }
      });
   };
 
@@ -22,10 +26,10 @@ const SingleCard = (props) => {
     <React.Fragment>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {props.created}
+          {created}
         </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {props.firstName} {props.lastName}
+          {firstName} {lastName}
         </Typography>
       </CardContent>
       <CardActions>

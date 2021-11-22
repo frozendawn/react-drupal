@@ -39,7 +39,7 @@ const PageLayout = () => {
 
 
   const location = useLocation();
-  
+
   // fetchData function
   const fetchData = () => {
      fetch(`${url}?page=${curPage}`)
@@ -124,13 +124,7 @@ const PageLayout = () => {
       <Navbar/>
       <Container>
       <Grid container justifyContent="center" alignItems="center" spacing={3} sx={{mt:5}}>
-
       {location.state && location.state.message ? <Alert severity="success">{location.state.message}</Alert> : null}
-
-
-
-
-
       <Grid container spacing={3}>
         {storedData.map((el) => {
           return (
