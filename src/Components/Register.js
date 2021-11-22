@@ -30,7 +30,7 @@ const Register = () => {
         }),
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": "gl3ozrNosYQnECPLvO_QBKx0v4wVsR8E6Rr-w0JOOYg",
+          "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
         },
       }).then((data) => {
         if (data.ok) {

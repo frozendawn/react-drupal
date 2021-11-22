@@ -32,12 +32,11 @@ const Login = () => {
       }),
       headers: {
         "Content-Type": "application/json",
-        "X-CSRF-Token": "gl3ozrNosYQnECPLvO_QBKx0v4wVsR8E6Rr-w0JOOYg",
+        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
       },
     }).then((data) => {
       if (data.ok) {
         return data.json().then((data) => {
-          console.log(data);
           authCtx.login(data.csrf_token, data.current_user);
           history.push("/");
         });
@@ -60,10 +59,9 @@ const Login = () => {
       style={{ minHeight: "60vh" }}
       spacing={2}
     >
-        <Typography variant='h6'>Login</Typography>
+      <Typography variant="h6">Login</Typography>
       {error && <Error error={error} />}
       <Grid item>
-        
         <form onSubmit={onSubmitHandler}>
           <Grid
             container
@@ -91,14 +89,13 @@ const Login = () => {
                 variant="outlined"
               />
             </Grid>
-          
-<Grid item style={{width: "100%"}}>
-            <Button fullWidth type="submit" variant="contained">
-              Submit
-            </Button>
-    </Grid>
-            </Grid>
 
+            <Grid item style={{ width: "100%" }}>
+              <Button fullWidth type="submit" variant="contained">
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
         </form>
       </Grid>
     </Grid>

@@ -11,7 +11,6 @@ import { Box } from '@mui/system';
 const Navbar = () => {
     const history = useHistory()
     const authCtx = useContext(AuthContext);
-    console.log('LOGGING authCtx from navbar component',authCtx)
 
     return (
         <AppBar position="static">
@@ -28,12 +27,11 @@ const Navbar = () => {
                    <Button color="inherit" onClick={authCtx.logout}>Logout</Button>
                   </Box> : 
                   <Box>
-                            <Button color="inherit" onClick={() => history.push('/login')}>Login</Button>
-                            <Button color="inherit" onClick={() => history.push('/register')}>Register</Button>
+                    <Button color="inherit" onClick={() => history.push('/login')}>Login</Button>
+                    <Button color="inherit" onClick={() => history.push('/register')}>Register</Button>
                   </Box>
 
           }
-
         </Toolbar>
       </AppBar>
     )

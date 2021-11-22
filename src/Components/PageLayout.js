@@ -39,10 +39,8 @@ const PageLayout = () => {
 
 
   const location = useLocation();
-  //console.log('logging location object in /',location)
-
+  
   // fetchData function
-
   const fetchData = () => {
      fetch(`${url}?page=${curPage}`)
      .then( data => data.json() )
