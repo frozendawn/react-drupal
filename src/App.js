@@ -1,8 +1,8 @@
 import { Switch, Route } from "react-router-dom";
-import PageLayout from "./pages/PageLayout";
-import CardDetail from "./pages/CardDetail";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import PageLayout from "./Pages/SubscriptionsListing";
+import CardDetail from "./Pages/CardDetail";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
 import { useContext } from "react";
 import AuthContext from "./Components/context/auth-context";
 import { Redirect } from "react-router";

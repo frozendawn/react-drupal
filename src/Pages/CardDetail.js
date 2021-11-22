@@ -8,8 +8,7 @@ import Spinner from "../Components/Spinner";
 
 const CardDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
-  let params = useParams();
-  let id = params.id;
+  let { id } = useParams();
   const [foundCard, setFoundCard] = useState({});
   let { firstName, lastName, description } = foundCard;
   let [error, setError] = useState(null);
@@ -21,12 +20,11 @@ const CardDetail = () => {
       return data.json().then((data) => {
         setIsLoading(false);
         if (isOk) {
-          let formatedCard = {
+          setFoundCard({
             firstName: data["title"][0].value,
             lastName: data["field_last_name"][0].value,
-            description: data["field_description"][0].value,
-          };
-          setFoundCard(formatedCard);
+            description: data["field_description"][0].value
+          });
         } else {
           setError({ message: "No data found for this page" });
         }

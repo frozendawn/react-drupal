@@ -25,7 +25,7 @@ const style = {
   p: 4,
 };
 
-const PageLayout = () => {
+const SubscriptionsListing = () => {
   const [curPage, setCurPage] = useState(0);
   const [storedData, setStoredData] = useState([]);
   const [totalData, setTotalData] = useState(0);
@@ -187,4 +187,4 @@ const PageLayout = () => {
   );
 };
 
-export default PageLayout;
+export default SubscriptionsListing;
