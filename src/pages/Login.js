@@ -3,19 +3,18 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { useState } from "react";
 import { useContext } from "react";
-import AuthContext from "./context/auth-context";
+import AuthContext from "../Components/context/auth-context";
 import { useHistory } from "react-router";
 import { useEffect } from "react";
-import Error from "./Error";
+import Error from "../Components/Error";
 
 const Login = () => {
+  const authCtx = useContext(AuthContext);
+  const history = useHistory();
+
   const [formValues, setFormValues] = useState({});
   const [error, setError] = useState(null);
   const [formIsValid, setFormIsValid] = useState(false);
-
-  const authCtx = useContext(AuthContext);
-
-  const history = useHistory();
 
   const onBlurHandler = (e) => {
     setFormValues((prevState) => {
@@ -37,29 +36,30 @@ const Login = () => {
         "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
       },
     }).then((data) => {
-      if (data.ok) {
-        return data.json().then((data) => {
+      const isOk = data.ok;
+      return data.json().then((data) => {
+        if (isOk) {
           authCtx.login(data.csrf_token, data.current_user);
           history.push("/");
-        });
-      }
-
-      if (data.ok !== true) {
-        return data.json().then((data) => {
+        } else {
           setError(data.message);
-        });
-      }
+        }
+      });
     });
   };
 
-  useEffect( () => {
-    if ((formValues.username && formValues.username.trim().length > 0) && (formValues.password && formValues.password.trim().length > 0)){
+  useEffect(() => {
+    if (
+      formValues.username &&
+      formValues.username.trim().length > 0 &&
+      formValues.password &&
+      formValues.password.trim().length > 0
+    ) {
       setFormIsValid(true);
-    }
-    else {
+    } else {
       setFormIsValid(false);
     }
-  },[formValues.username,formValues.password])
+  }, [formValues.username, formValues.password]);
 
   return (
     <Grid
@@ -102,7 +102,12 @@ const Login = () => {
             </Grid>
 
             <Grid item style={{ width: "100%" }}>
-              <Button fullWidth disabled={formIsValid ? false : true} type="submit" variant="contained">
+              <Button
+                fullWidth
+                disabled={formIsValid ? false : true}
+                type="submit"
+                variant="contained"
+              >
                 Submit
               </Button>
             </Grid>

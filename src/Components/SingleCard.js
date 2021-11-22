@@ -1,5 +1,4 @@
 import { useHistory } from "react-router";
-
 import React from "react";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -8,18 +7,11 @@ import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
-const SingleCard = ({id,created,firstName,lastName,description}) => {
+const SingleCard = ({id,created,firstName,lastName}) => {
   let history = useHistory();
 
   const clickHandler = (e) => {
-    history.push({ 
-      pathname: `/cards/${id}`,
-      state: {
-        firstName:firstName,
-        lastName:lastName,
-        description:description,
-      }
-     });
+    history.push(`/cards/${id}`);
   };
 
   const card = (

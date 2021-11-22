@@ -30,7 +30,6 @@ const Navbar = () => {
                     <Button color="inherit" onClick={() => history.push('/login')}>Login</Button>
                     <Button color="inherit" onClick={() => history.push('/register')}>Register</Button>
                   </Box>
-
           }
         </Toolbar>
       </AppBar>

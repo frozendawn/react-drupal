@@ -10,10 +10,7 @@ import validator from "validator";
 const NewCard = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
-
   const [error, setError] = useState(null);
-
-  //New Try
 
   const [formFieldValues, setFormFieldValues] = useState({});
   const [invalidFields, setInvalidFields] = useState({});
@@ -85,22 +82,23 @@ const NewCard = (props) => {
         },
       }),
     }).then((response) => {
-      if (response.ok) {
-        if (props.currentPage === 0) {
-          props.removeData();
-          props.fetchData();
-          props.resetTotalData();
+      const isOk = response.ok;
+      return response.json()
+      .then(data => {
+        if(isOk){
+          if (props.currentPage === 0) {
+            props.removeData();
+            props.fetchData();
+            props.resetTotalData();
+            props.close();
+          }
           props.close();
-        }
-        props.close();
-        props.resetPage();
-      }
-      if (response.ok !== true) {
-        return response.json().then((data) => {
+          props.resetPage();
+        } else {
           setError(data.errors);
           setIsLoading(false);
-        });
-      }
+        }
+      })
     });
   };
 

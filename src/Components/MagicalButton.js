@@ -10,9 +10,7 @@ const MagicalButton = (props) => {
         `http://localhost:8080/api/subscription/?page=${props.currentPage + 1}`
       );
       const data = await response.json();
-
       setNextPageData(data);
-
     };
 
     fetchNextPage();
