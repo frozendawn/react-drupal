@@ -6,6 +6,8 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import EditIcon from '@mui/icons-material/Edit';
+import { IconButton } from "@mui/material";
 
 const SingleCard = ({id,created,firstName,lastName}) => {
   let history = useHistory();
@@ -13,6 +15,10 @@ const SingleCard = ({id,created,firstName,lastName}) => {
   const clickHandler = (e) => {
     history.push(`/cards/${id}`);
   };
+
+  const editHandler = (e) => {
+    history.push(`/cards/update/${id}`)
+  }
 
   const card = (
     <React.Fragment>
@@ -28,6 +34,9 @@ const SingleCard = ({id,created,firstName,lastName}) => {
         <Button size="small" onClick={clickHandler}>
           Learn More
         </Button>
+        <IconButton onClick={editHandler}>
+          <EditIcon/>
+        </IconButton>
       </CardActions>
     </React.Fragment>
   );

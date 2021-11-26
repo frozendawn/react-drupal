@@ -15,6 +15,42 @@ const NewCard = (props) => {
   const [formFieldValues, setFormFieldValues] = useState({});
   const [invalidFields, setInvalidFields] = useState({});
 
+  const [newlyCreatedImage, setNewlyCreatedImage] = useState({});
+  console.log("logging newlyCreatedImage", newlyCreatedImage);
+
+  const handleChange = (e) => {
+
+    //image fetch function
+
+    let reader = new FileReader();
+
+    reader.readAsArrayBuffer(e.target.files[0]);
+
+    reader.onload = () => {
+      const arrayBuffer = reader.result; //our array buffer
+
+      fetch(
+        "http://localhost:8080/jsonapi/node/subscription/field_user_image",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/vnd.api+json",
+            "Content-Type": "application/octet-stream",
+            "Content-Disposition": `file; filename="${e.target.files[0].name}"`,
+            "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN
+          },
+          body: arrayBuffer,
+        }
+      ).then((result) => {
+        console.log(result);
+        return result.json().then((data) => {
+          setNewlyCreatedImage(data);
+          console.log(data);
+        });
+      });
+    };
+  };
+
   const validateEmail = (email) => {
     setInvalidFields((prevState) => {
       return {
@@ -59,15 +95,17 @@ const NewCard = (props) => {
   }, [invalidFields]);
 
   //submit form handler
-  const submitFormHandler = async (e) => {
+  const submitFormHandler = (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     fetch("http://localhost:8080/jsonapi/node/subscription", {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/vnd.api+json",
-        Accept: "application/vnd.api+json",
+        "Accept": "application/vnd.api+json",
+        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
       },
       body: JSON.stringify({
         data: {
@@ -78,14 +116,14 @@ const NewCard = (props) => {
             title: formFieldValues.firstName,
             field_last_name: formFieldValues.lastName,
             field_description: formFieldValues.description,
-          },
+          }
         },
       }),
     }).then((response) => {
       const isOk = response.ok;
-      return response.json()
-      .then(data => {
-        if(isOk){
+      return response.json().then((data) => {
+        if (isOk) {
+          console.log('newly created subscription',data)
           if (props.currentPage === 0) {
             props.removeData();
             props.fetchData();
@@ -94,11 +132,27 @@ const NewCard = (props) => {
           }
           props.close();
           props.resetPage();
+          let newSubscription = data;
+          fetch(
+            `http://localhost:8080/jsonapi/node/subscription/${newSubscription.data.id}/relationships/field_user_image`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/vnd.api+json",
+                Accept: "application/vnd.api+json",
+              },
+              body: JSON.stringify({
+                data: newlyCreatedImage.data,
+              }),
+            }
+          );
+
         } else {
+          console.log(data);
           setError(data.errors);
           setIsLoading(false);
         }
-      })
+      });
     });
   };
 
@@ -167,10 +221,16 @@ const NewCard = (props) => {
           />
         </Grid>
         <Grid item xs={12}>
+          <Button variant="contained" component="label" onChange={handleChange}>
+            Upload File
+            <input type="file" hidden name="image" />
+          </Button>
+        </Grid>
+        <Grid item xs={12}>
           <Button
             type="submit"
             variant="contained"
-            disabled={formIsValid ? false : true} 
+            disabled={formIsValid ? false : true}
             sx={{ mt: 2 }}
           >
             Submit

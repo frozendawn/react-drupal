@@ -7,7 +7,6 @@ import AuthContext from './context/auth-context';
 import { useHistory } from 'react-router';
 import { Box } from '@mui/system';
 
-
 const Navbar = () => {
     const history = useHistory()
     const authCtx = useContext(AuthContext);

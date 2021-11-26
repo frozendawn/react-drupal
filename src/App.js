@@ -6,6 +6,7 @@ import Register from "./Pages/Register";
 import { useContext } from "react";
 import AuthContext from "./Components/context/auth-context";
 import { Redirect } from "react-router";
+import UpdateCard from './Components/UpdateCard';
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -14,6 +15,10 @@ function App() {
       <Switch>
         <Route path="/" exact>
           <PageLayout />
+        </Route>
+
+        <Route path="/cards/update/:id" exact>
+          <UpdateCard />
         </Route>
 
         <Route path="/cards/:id" exact>
