@@ -18,8 +18,6 @@ const MagicalButton = (props) => {
 
   let buttonValue;
 
-
-
   if (nextPageData.slice().length < 6) {
     
     buttonValue = `Load ${nextPageData.length} more of ${props.remaining} remaining`;

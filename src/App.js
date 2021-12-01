@@ -10,6 +10,7 @@ import UpdateCard from './Components/UpdateCard';
 
 function App() {
   const authCtx = useContext(AuthContext);
+  console.log('logging user context:',authCtx)
   return (
     <div>
       <Switch>

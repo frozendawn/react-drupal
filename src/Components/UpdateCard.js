@@ -5,16 +5,19 @@ import { Button } from "@mui/material";
 import { useParams } from "react-router";
 import { useHistory } from "react-router";
 import Error from "./Error";
+import { useContext } from "react";
+import AuthContext from "./context/auth-context";
 
 const UpdateCard = () => {
   let { id } = useParams();
   const history = useHistory();
+  const authCtx = useContext(AuthContext)
 
   const [formFieldValues, setFormFieldValues] = useState({});
   let [error, setError] = useState(null);
   const [imgFile, setImgFile] = useState(null);
   const [imgFileBinary, setImgFileBinary] = useState(null);
-  const [imgChanged, setImageChanged] = useState(false);
+  const [imgChanged, setImgChanged] = useState(false);
   // File Reader Class
   let reader = new FileReader();
 
@@ -33,7 +36,7 @@ const UpdateCard = () => {
     };
 
     reader.onload = () => {
-      setImageChanged(true);
+      setImgChanged(true);
       // const arrayBuffer = reader.result; //our array buffer
       setImgFileBinary(reader.result);
     };
@@ -92,13 +95,13 @@ const UpdateCard = () => {
           "Accept": "application/vnd.api+json",
           "Content-Type": "application/vnd.api+json",
           "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+          "X-OAuth-Authorization": `Bearer ${authCtx.token}`
         },
         body: JSON.stringify({
           data: {
             type: "subscription",
             id: formFieldValues.uuid,
             attributes: {
-              field_first_name: formFieldValues.firstName,
               field_email: formFieldValues.email,
               title: formFieldValues.firstName,
               field_last_name: formFieldValues.lastName,
@@ -108,6 +111,7 @@ const UpdateCard = () => {
         }),
       }
     ).then((response) => {
+      console.log('logging response in FIRST THEN',response)
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
@@ -123,7 +127,6 @@ const UpdateCard = () => {
                   "Content-Type": "application/octet-stream",
                   "Accept": "application/vnd.api+json",
                   "Content-Disposition": `file; filename="${imgFile.name}"`,
-                  "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
                 },
                 body: imgFileBinary,
               }
@@ -136,6 +139,7 @@ const UpdateCard = () => {
         } else {
           console.log("logging data in response not ok", data);
           console.log("response is not ok");
+          setError(data.errors[0].detail)
         }
       });
     });

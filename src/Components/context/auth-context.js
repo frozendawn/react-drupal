@@ -17,7 +17,7 @@ export const AuthContextProvider = (props) => {
 
     const loginHandler = (token,user) => {
         setUser({
-            name: user.name,
+            name: user,
             id: user.uid
         });
         setToken(token)

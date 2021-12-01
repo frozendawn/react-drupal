@@ -6,11 +6,14 @@ import Error from "./Error";
 
 import { useEffect, useState } from "react";
 import validator from "validator";
+import { useContext } from "react";
+import AuthContext from "./context/auth-context";
 
 const NewCard = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
   const [error, setError] = useState(null);
+  const authCtx = useContext(AuthContext);
 
   const [formFieldValues, setFormFieldValues] = useState({});
   const [invalidFields, setInvalidFields] = useState({});
@@ -37,7 +40,8 @@ const NewCard = (props) => {
             Accept: "application/vnd.api+json",
             "Content-Type": "application/octet-stream",
             "Content-Disposition": `file; filename="${e.target.files[0].name}"`,
-            "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN
+            "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+            "X-OAuth-Authorization": `Bearer ${authCtx.token}`
           },
           body: arrayBuffer,
         }
@@ -105,13 +109,13 @@ const NewCard = (props) => {
       headers: {
         "Content-Type": "application/vnd.api+json",
         "Accept": "application/vnd.api+json",
-        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,  
+        "X-OAuth-Authorization": `Bearer ${authCtx.token}`
       },
       body: JSON.stringify({
         data: {
           type: "subscription",
           attributes: {
-            field_first_name: formFieldValues.firstName,
             field_email: formFieldValues.email,
             title: formFieldValues.firstName,
             field_last_name: formFieldValues.lastName,
@@ -139,7 +143,8 @@ const NewCard = (props) => {
               method: "PATCH",
               headers: {
                 "Content-Type": "application/vnd.api+json",
-                Accept: "application/vnd.api+json",
+                "Accept": "application/vnd.api+json",
+                "X-OAuth-Authorization": `Bearer ${authCtx.token}`
               },
               body: JSON.stringify({
                 data: newlyCreatedImage.data,

@@ -24,22 +24,29 @@ const Login = () => {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
-    fetch("http://localhost:8080/user/login?_format=json", {
+    let formData = new FormData();
+    formData.append('grant_type', 'password');
+    formData.append('client_id', '92306554-e5ba-49b2-b775-41d7208c5364');
+    formData.append('client_secret', process.env.REACT_APP_OAUTH_SECRET);
+    formData.append('scope', '');
+    formData.append('username', formValues.username);
+    formData.append('password', formValues.password);
+
+
+
+    fetch("http://localhost:8080/oauth/token", {
       method: "POST",
       mode: "cors",
-      body: JSON.stringify({
-        name: formValues.username,
-        pass: formValues.password,
-      }),
       headers: {
-        "Content-Type": "application/json",
-        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+        'Accept': 'application/json'
       },
+      body: formData
     }).then((data) => {
       const isOk = data.ok;
       return data.json().then((data) => {
+        console.log('logging data returned for logged user',data)
         if (isOk) {
-          authCtx.login(data.csrf_token, data.current_user);
+          authCtx.login(data.access_token, formValues.username);
           history.push("/");
         } else {
           setError(data.message);
