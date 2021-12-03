@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
 import React from "react";
 import { Grid } from "@mui/material";
 import SingleCard from "../Components/SingleCard";
 import { Button } from "@mui/material";
 import MagicalButton from "../Components/MagicalButton";
 import NewCard from "../Components/NewCard";
-
 import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
 import Modal from "@mui/material/Modal";
 import { Container } from "@mui/material";
 
@@ -30,29 +27,27 @@ const SubscriptionsListing = () => {
   const [totalData, setTotalData] = useState(0);
   const fetchLimit = 3;
   const [remaining, setRemaining] = useState(0);
-  let url = "http://localhost:8080/api/subscription";
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const location = useLocation();
-
   // fetchData function
   const fetchData = () => {
-    fetch(`${url}?page=${curPage}`)
+    fetch(`${process.env.REACT_APP_API_URL}?page=${curPage}`)
       .then((data) => data.json())
       .then((data) => {
         const convertedData = [];
 
         for (let key in data) {
+          let dataKey = data[key];
           convertedData.push({
-            id: data[key].nid,
-            author: data[key].uid,
-            created: data[key].created,
-            firstName: data[key].title,
-            lastName: data[key].field_last_name,
-            description: data[key].field_description
+            id: dataKey.nid,
+            author: dataKey.uid,
+            created: dataKey.created,
+            firstName: dataKey.title,
+            lastName: dataKey.field_last_name,
+            description: dataKey.field_description
           });
         }
 
@@ -66,7 +61,7 @@ const SubscriptionsListing = () => {
   // fetch total amount of data function
 
   const fetchDataValue = () => {
-    fetch("http://localhost:8080/api/total_data")
+    fetch(process.env.REACT_APP_API_FETCH_TOTAL_DATA)
       .then((data) => data.json())
       .then((data) => setTotalData(data.total));
   };
@@ -94,6 +89,9 @@ const SubscriptionsListing = () => {
       return updatedRemaining;
     });
 
+
+
+
     setCurPage((prevState) => {
       return prevState + 1;
     });
@@ -102,7 +100,7 @@ const SubscriptionsListing = () => {
   // Fetch total number of data
   useEffect(() => {
     fetchDataValue();
-  }, [curPage]);
+  }, []);
 
   //fetch data for current page
   useEffect(() => {
@@ -124,9 +122,7 @@ const SubscriptionsListing = () => {
           spacing={3}
           sx={{ mt: 5 }}
         >
-          {location.state && location.state.message ? (
-            <Alert severity="success">{location.state.message}</Alert>
-          ) : null}
+
           <Grid container spacing={3}>
             {storedData.map((el) => {
               return (

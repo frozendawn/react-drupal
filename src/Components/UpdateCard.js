@@ -85,7 +85,7 @@ const UpdateCard = () => {
     e.preventDefault();
 
     fetch(
-      `http://localhost:8080/jsonapi/node/subscription/${formFieldValues.uuid}`,
+      `${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}`,
       {
         method: "PATCH",
         mode: "cors",
@@ -117,7 +117,7 @@ const UpdateCard = () => {
             //posting image if the rest of the data is updated successfully
             //upload image
             fetch(
-              `http://localhost:8080/jsonapi/node/subscription/${formFieldValues.uuid}/field_user_image`,
+              `${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}/field_user_image`,
               {
                 method: "POST",
                 headers: {

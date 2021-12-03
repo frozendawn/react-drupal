@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
 import Error from "./Error";
-
 import { useEffect, useState } from "react";
 import validator from "validator";
 import { useContext } from "react";
@@ -32,7 +31,7 @@ const NewCard = (props) => {
       const arrayBuffer = reader.result; // array buffer
 
       fetch(
-        "http://localhost:8080/jsonapi/node/subscription/field_user_image",
+        `${process.env.REACT_APP_JSONAPI_POST_PATCH}field_user_image`,
         {
           method: "POST",
           headers: {
@@ -100,7 +99,7 @@ const NewCard = (props) => {
     e.preventDefault();
     setIsLoading(true);
 
-    fetch("http://localhost:8080/jsonapi/node/subscription", {
+    fetch(process.env.REACT_APP_JSONAPI_POST_PATCH, {
       method: "POST",
       mode: "cors",
       headers: {
@@ -124,17 +123,14 @@ const NewCard = (props) => {
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
-          if (props.currentPage === 0) {
-            props.removeData();
-            props.fetchData();
-            props.resetTotalData();
-            props.close();
-          }
+          props.removeData();
+          props.fetchData();
+          props.resetTotalData();
           props.close();
-          props.resetPage();
+
           let newSubscription = data;
           fetch(
-            `http://localhost:8080/jsonapi/node/subscription/${newSubscription.data.id}/relationships/field_user_image`,
+            `${process.env.REACT_APP_JSONAPI_POST_PATCH}${newSubscription.data.id}/relationships/field_user_image`,
             {
               method: "PATCH",
               headers: {

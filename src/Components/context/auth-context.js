@@ -39,6 +39,7 @@ const retrieveStoredToken = () => {
 }
 
 export const AuthContextProvider = (props) => {
+
     const tokenData = retrieveStoredToken();
     let initialToken;
 

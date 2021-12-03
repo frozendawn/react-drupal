@@ -32,8 +32,6 @@ const Login = () => {
     formData.append('username', formValues.username);
     formData.append('password', formValues.password);
 
-
-
     fetch("http://localhost:8080/oauth/token", {
       method: "POST",
       mode: "cors",

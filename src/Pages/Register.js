@@ -54,12 +54,7 @@ const Register = () => {
         let isOk = data.ok;
         return data.json().then((data) => {
           if (isOk) {
-            history.push({
-              pathname: `/`,
-              state: {
-                message: "Successful registration !",
-              },
-            });
+            history.push('/');
           } else {
             setError(data.message);
           }
