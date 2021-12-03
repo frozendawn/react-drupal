@@ -10,7 +10,6 @@ import NewCard from "../Components/NewCard";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Modal from "@mui/material/Modal";
-import Navbar from "../Components/Navbar";
 import { Container } from "@mui/material";
 
 const style = {
@@ -49,10 +48,11 @@ const SubscriptionsListing = () => {
         for (let key in data) {
           convertedData.push({
             id: data[key].nid,
+            author: data[key].uid,
             created: data[key].created,
             firstName: data[key].title,
             lastName: data[key].field_last_name,
-            description: data[key].field_description,
+            description: data[key].field_description
           });
         }
 
@@ -116,7 +116,6 @@ const SubscriptionsListing = () => {
 
   return (
     <div>
-      <Navbar />
       <Container>
         <Grid
           container
@@ -138,6 +137,7 @@ const SubscriptionsListing = () => {
                     description={el.description}
                     id={el.id}
                     created={el.created}
+                    author={el.author}
                   />
                 </Grid>
               );

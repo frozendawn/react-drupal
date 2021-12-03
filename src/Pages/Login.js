@@ -44,9 +44,11 @@ const Login = () => {
     }).then((data) => {
       const isOk = data.ok;
       return data.json().then((data) => {
-        console.log('logging data returned for logged user',data)
         if (isOk) {
-          authCtx.login(data.access_token, formValues.username);
+          const expirationTime = new Date(
+            new Date().getTime() + (+data.expires_in * 1000)
+          );
+          authCtx.login(data.access_token, formValues.username,expirationTime.toISOString());
           history.push("/");
         } else {
           setError(data.message);

@@ -37,7 +37,6 @@ const UpdateCard = () => {
 
     reader.onload = () => {
       setImgChanged(true);
-      // const arrayBuffer = reader.result; //our array buffer
       setImgFileBinary(reader.result);
     };
   };
@@ -54,7 +53,6 @@ const UpdateCard = () => {
     fetch(`http://localhost:8080/node/${id}?_format=json`).then((data) => {
       const isOk = data.ok;
       return data.json().then((data) => {
-        console.log("logging the detail data", data);
         if (isOk) {
           setFormFieldValues({
             email: data["field_email"][0].value,
@@ -111,7 +109,6 @@ const UpdateCard = () => {
         }),
       }
     ).then((response) => {
-      console.log('logging response in FIRST THEN',response)
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
@@ -127,6 +124,7 @@ const UpdateCard = () => {
                   "Content-Type": "application/octet-stream",
                   "Accept": "application/vnd.api+json",
                   "Content-Disposition": `file; filename="${imgFile.name}"`,
+                  "X-OAuth-Authorization": `Bearer ${authCtx.token}`
                 },
                 body: imgFileBinary,
               }
@@ -137,7 +135,6 @@ const UpdateCard = () => {
             history.replace(`/cards/${id}`);
           }
         } else {
-          console.log("logging data in response not ok", data);
           console.log("response is not ok");
           setError(data.errors[0].detail)
         }

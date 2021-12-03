@@ -8,9 +8,12 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EditIcon from '@mui/icons-material/Edit';
 import { IconButton } from "@mui/material";
+import { useContext } from "react";
+import AuthContext from "./context/auth-context";
 
-const SingleCard = ({id,created,firstName,lastName}) => {
+const SingleCard = ({id,author,created,firstName,lastName}) => {
   let history = useHistory();
+  let authCtx = useContext(AuthContext);
 
   const clickHandler = (e) => {
     history.push(`/cards/${id}`);
@@ -26,6 +29,9 @@ const SingleCard = ({id,created,firstName,lastName}) => {
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           {created}
         </Typography>
+        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+          Author: {author}
+        </Typography>
         <Typography sx={{ mb: 1.5 }} color="text.secondary">
           {firstName} {lastName}
         </Typography>
@@ -34,9 +40,15 @@ const SingleCard = ({id,created,firstName,lastName}) => {
         <Button size="small" onClick={clickHandler}>
           Learn More
         </Button>
-        <IconButton onClick={editHandler}>
-          <EditIcon/>
-        </IconButton>
+        {authCtx.isLoggedIn && author === authCtx.user.name ? (
+                <IconButton onClick={editHandler}>
+                <EditIcon/>
+              </IconButton>
+              )
+              :
+              null
+        }
+
       </CardActions>
     </React.Fragment>
   );

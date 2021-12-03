@@ -19,7 +19,6 @@ const NewCard = (props) => {
   const [invalidFields, setInvalidFields] = useState({});
 
   const [newlyCreatedImage, setNewlyCreatedImage] = useState({});
-  console.log("logging newlyCreatedImage", newlyCreatedImage);
 
   const handleChange = (e) => {
 
@@ -30,7 +29,7 @@ const NewCard = (props) => {
     reader.readAsArrayBuffer(e.target.files[0]);
 
     reader.onload = () => {
-      const arrayBuffer = reader.result; //our array buffer
+      const arrayBuffer = reader.result; // array buffer
 
       fetch(
         "http://localhost:8080/jsonapi/node/subscription/field_user_image",
@@ -46,10 +45,8 @@ const NewCard = (props) => {
           body: arrayBuffer,
         }
       ).then((result) => {
-        console.log(result);
         return result.json().then((data) => {
           setNewlyCreatedImage(data);
-          console.log(data);
         });
       });
     };
@@ -127,7 +124,6 @@ const NewCard = (props) => {
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
-          console.log('newly created subscription',data)
           if (props.currentPage === 0) {
             props.removeData();
             props.fetchData();
@@ -153,7 +149,6 @@ const NewCard = (props) => {
           );
 
         } else {
-          console.log(data);
           setError(data.errors);
           setIsLoading(false);
         }

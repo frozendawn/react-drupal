@@ -1,5 +1,5 @@
 import { Switch, Route } from "react-router-dom";
-import PageLayout from "./Pages/SubscriptionsListing";
+import SubscriptionsListing from "./Pages/SubscriptionsListing";
 import CardDetail from "./Pages/CardDetail";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
@@ -7,24 +7,36 @@ import { useContext } from "react";
 import AuthContext from "./Components/context/auth-context";
 import { Redirect } from "react-router";
 import UpdateCard from './Components/UpdateCard';
+import { Typography } from "@mui/material";
+import Navbar from "./Components/Navbar";
+import { Grid } from "@mui/material";
 
 function App() {
   const authCtx = useContext(AuthContext);
-  console.log('logging user context:',authCtx)
   return (
     <div>
+      
+      <Navbar />
+      
       <Switch>
         <Route path="/" exact>
-          <PageLayout />
+          {authCtx.isLoggedIn ? <SubscriptionsListing /> :
+          <Grid container justifyContent="center" alignItems="center">
+            <Grid item>
+            <Typography>Login to view subscriptions</Typography>
+          </Grid>
+          </Grid>
+          } 
         </Route>
 
-        <Route path="/cards/update/:id" exact>
+        {authCtx.isLoggedIn ? (<Route path="/cards/update/:id" exact>
           <UpdateCard />
-        </Route>
+        </Route>) : null}
 
-        <Route path="/cards/:id" exact>
+        {authCtx.isLoggedIn ? (<Route path="/cards/:id" exact>
           <CardDetail />
-        </Route>
+        </Route>) : null}
+        
 
         {!authCtx.isLoggedIn && (
           <Route path="/login" exact>
