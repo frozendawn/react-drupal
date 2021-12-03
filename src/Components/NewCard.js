@@ -123,8 +123,15 @@ const NewCard = (props) => {
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
+
+          if(props.currentPage === 0) {
+            props.removeData();
+            props.resetTotalData();
+            props.fetchData();
+            props.close();
+          }
           props.removeData();
-          props.fetchData();
+          props.resetPage();
           props.resetTotalData();
           props.close();
 

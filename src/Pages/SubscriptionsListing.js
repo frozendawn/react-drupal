@@ -24,6 +24,7 @@ const style = {
 const SubscriptionsListing = () => {
   const [curPage, setCurPage] = useState(0);
   const [storedData, setStoredData] = useState([]);
+  console.log('logging storedData,', storedData);
   const [totalData, setTotalData] = useState(0);
   const fetchLimit = 3;
   const [remaining, setRemaining] = useState(0);
@@ -31,6 +32,7 @@ const SubscriptionsListing = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  console.log('logging current page',curPage)
 
   // fetchData function
   const fetchData = () => {
@@ -97,7 +99,7 @@ const SubscriptionsListing = () => {
     });
   };
 
-  // Fetch total number of data
+  // Fetch total number of data for the first time the page renders
   useEffect(() => {
     fetchTotalDataValue();
   }, []);
