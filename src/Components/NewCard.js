@@ -51,6 +51,23 @@ const NewCard = (props) => {
     };
   };
 
+  const attachImageToSubscription = (id) => {
+    fetch(
+      `${process.env.REACT_APP_JSONAPI_POST_PATCH}${id}/relationships/field_user_image`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/vnd.api+json",
+          "Accept": "application/vnd.api+json",
+          "X-OAuth-Authorization": `Bearer ${authCtx.token}`
+        },
+        body: JSON.stringify({
+          data: newlyCreatedImage.data,
+        }),
+      }
+    );
+  }
+
   const validateEmail = (email) => {
     setInvalidFields((prevState) => {
       return {
@@ -123,34 +140,15 @@ const NewCard = (props) => {
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
-
-          if(props.currentPage === 0) {
-            props.removeData();
-            props.resetTotalData();
-            props.fetchData();
-            props.close();
-          }
-          props.removeData();
-          props.resetPage();
-          props.resetTotalData();
+          props.addNew();
           props.close();
 
           let newSubscription = data;
-          fetch(
-            `${process.env.REACT_APP_JSONAPI_POST_PATCH}${newSubscription.data.id}/relationships/field_user_image`,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/vnd.api+json",
-                "Accept": "application/vnd.api+json",
-                "X-OAuth-Authorization": `Bearer ${authCtx.token}`
-              },
-              body: JSON.stringify({
-                data: newlyCreatedImage.data,
-              }),
-            }
-          );
 
+          if(newlyCreatedImage){
+            attachImageToSubscription(newSubscription.data.id)
+          }
+          
         } else {
           setError(data.errors);
           setIsLoading(false);

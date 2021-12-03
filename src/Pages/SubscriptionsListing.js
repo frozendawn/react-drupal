@@ -70,14 +70,6 @@ const SubscriptionsListing = () => {
     setRemaining(totalData - fetchLimit);
   }, [totalData]);
 
-  const resetPageHandler = () => {
-    setCurPage(0);
-  };
-
-  const deleteDataHandler = (e) => {
-    setStoredData([]);
-  };
-
   const loadMoreHandler = (e) => {
     setRemaining((prevState) => {
       let updatedRemaining = prevState - fetchLimit;
@@ -89,12 +81,8 @@ const SubscriptionsListing = () => {
       return updatedRemaining;
     });
 
-
-
-
-    setCurPage((prevState) => {
-      return prevState + 1;
-    });
+    setCurPage(prevState => prevState + 1);
+    // prevState++ ne raboti
   };
 
   // Fetch total number of data for the first time the page renders
@@ -104,13 +92,21 @@ const SubscriptionsListing = () => {
 
   //fetch data for current page
   useEffect(() => {
-    if (curPage === 0) {
-      setStoredData([]);
-      fetchData();
-    } else if (curPage > 0) {
-      fetchData();
-    }
+  fetchData();
   }, [curPage]);
+
+
+ const newlyAddedSubscription = () => {
+   if(curPage !== 0 ){
+    setCurPage(0);
+   }
+
+   if(curPage === 0) {
+     fetchData();
+   }
+   setStoredData([]);
+   fetchTotalDataValue();
+ }
 
   return (
     <div>
@@ -169,11 +165,7 @@ const SubscriptionsListing = () => {
         >
           <Box sx={style}>
             <NewCard
-              currentPage={curPage}
-              resetPage={resetPageHandler}
-              removeData={deleteDataHandler}
-              fetchData={fetchData}
-              resetTotalData={fetchTotalDataValue}
+              addNew={newlyAddedSubscription}
               close={handleClose}
             />
           </Box>
