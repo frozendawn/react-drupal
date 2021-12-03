@@ -60,7 +60,7 @@ const SubscriptionsListing = () => {
 
   // fetch total amount of data function
 
-  const fetchDataValue = () => {
+  const fetchTotalDataValue = () => {
     fetch(process.env.REACT_APP_API_FETCH_TOTAL_DATA)
       .then((data) => data.json())
       .then((data) => setTotalData(data.total));
@@ -99,7 +99,7 @@ const SubscriptionsListing = () => {
 
   // Fetch total number of data
   useEffect(() => {
-    fetchDataValue();
+    fetchTotalDataValue();
   }, []);
 
   //fetch data for current page
@@ -173,7 +173,7 @@ const SubscriptionsListing = () => {
               resetPage={resetPageHandler}
               removeData={deleteDataHandler}
               fetchData={fetchData}
-              resetTotalData={fetchDataValue}
+              resetTotalData={fetchTotalDataValue}
               close={handleClose}
             />
           </Box>
