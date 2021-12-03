@@ -14,10 +14,9 @@ const UpdateCard = () => {
   const authCtx = useContext(AuthContext)
 
   const [formFieldValues, setFormFieldValues] = useState({});
-  let [error, setError] = useState(null);
+  const [error, setError] = useState(null);
   const [imgFile, setImgFile] = useState(null);
   const [imgFileBinary, setImgFileBinary] = useState(null);
-  const [imgChanged, setImgChanged] = useState(false);
   // File Reader Class
   let reader = new FileReader();
 
@@ -36,7 +35,6 @@ const UpdateCard = () => {
     };
 
     reader.onload = () => {
-      setImgChanged(true);
       setImgFileBinary(reader.result);
     };
   };
@@ -132,7 +130,7 @@ const UpdateCard = () => {
       return response.json().then((data) => {
         if (isOk) {
 
-          if (imgChanged) {
+          if (imgFile) {
             //posting image if the rest of the data is updated successfully
             //upload image + redirect user to the updated card
             updateSubscriptionImage();

@@ -3,12 +3,12 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Typography } from "@mui/material";
 
-const Error = (props) => {
+const Error = ({error}) => {
   return (
     <Alert severity="error">
       <AlertTitle>Error</AlertTitle>
       <Typography variant="p">
-        {props.error}
+        {error}
       </Typography>
     </Alert>
   );

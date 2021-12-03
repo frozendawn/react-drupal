@@ -26,7 +26,6 @@ const SubscriptionsListing = () => {
   const [storedData, setStoredData] = useState([]);
   const [totalData, setTotalData] = useState(0);
   const fetchLimit = 3;
-  const [remaining, setRemaining] = useState(0);
 
   const [open, setOpen] = useState(false);
   // fetchData function
@@ -63,21 +62,7 @@ const SubscriptionsListing = () => {
       .then((data) => setTotalData(data.total));
   };
 
-  useEffect(() => {
-    setRemaining(totalData - fetchLimit);
-  }, [totalData]);
-
   const loadMoreHandler = () => {
-    setRemaining((prevState) => {
-      let updatedRemaining = prevState - fetchLimit;
-
-      if (updatedRemaining <= 0) {
-        updatedRemaining = 0;
-      }
-
-      return updatedRemaining;
-    });
-
     setCurPage(prevState => prevState + 1);
     // prevState++ ne raboti
   };
@@ -138,7 +123,7 @@ const SubscriptionsListing = () => {
               <MagicalButton
                 onClickHandler={loadMoreHandler}
                 currentPage={curPage}
-                remaining={remaining}
+                remaining={totalData - storedData.length}
                 fetchLimit={fetchLimit}
               />
             </Grid>

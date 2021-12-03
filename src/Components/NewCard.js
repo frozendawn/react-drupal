@@ -17,7 +17,7 @@ const NewCard = ({addNew,close}) => {
   const [formFieldValues, setFormFieldValues] = useState({});
   const [invalidFields, setInvalidFields] = useState({});
 
-  const [newlyCreatedImage, setNewlyCreatedImage] = useState({});
+  const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
 
   const handleChange = (e) => {
 

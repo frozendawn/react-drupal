@@ -24,29 +24,23 @@ function App() {
           )}
         </Route>
 
-        {authCtx.isLoggedIn && (
-          <React.Fragment>
-            <Route path="/cards/update/:id" exact>
-              <UpdateCard />
-            </Route>
+        {authCtx.isLoggedIn && [
+          <Route path="/cards/update/:id" exact key="/cards/update/:id">
+            <UpdateCard />
+          </Route>,
+          <Route path="/cards/:id" exact key="/cards/:id">
+            <CardDetail />
+          </Route>,
+        ]}
 
-            <Route path="/cards/:id" exact>
-              <CardDetail />
-            </Route>
-          </React.Fragment>
-        )}
-
-        {!authCtx.isLoggedIn && (
-          <React.Fragment>
-            <Route path="/login" exact>
-              <Login />
-            </Route>
-
-            <Route path="/register" exact>
-              <Register />
-            </Route>
-          </React.Fragment>
-        )}
+        {!authCtx.isLoggedIn && [
+          <Route path="/login" exact key={"/login"}>
+            <Login />
+          </Route>,
+          <Route path="/register" exact key={"/register"}>
+            <Register />
+          </Route>,
+        ]}
 
         <Route path="*">
           <Redirect to="/" />
