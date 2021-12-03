@@ -29,9 +29,6 @@ const SubscriptionsListing = () => {
   const [remaining, setRemaining] = useState(0);
 
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
   // fetchData function
   const fetchData = () => {
     fetch(`${process.env.REACT_APP_API_URL}?page=${curPage}`)
@@ -70,7 +67,7 @@ const SubscriptionsListing = () => {
     setRemaining(totalData - fetchLimit);
   }, [totalData]);
 
-  const loadMoreHandler = (e) => {
+  const loadMoreHandler = () => {
     setRemaining((prevState) => {
       let updatedRemaining = prevState - fetchLimit;
 
@@ -148,7 +145,7 @@ const SubscriptionsListing = () => {
             <Grid item>
               <Button
                 variant="outlined"
-                onClick={handleOpen}
+                onClick={() => setOpen(true)}
                 margin="normal"
                 sx={{ mt: 3, ml: 3 }}
               >
@@ -159,14 +156,14 @@ const SubscriptionsListing = () => {
         </Grid>
         <Modal
           open={open}
-          onClose={handleClose}
+          onClose={() => setOpen(false)}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
             <NewCard
               addNew={newlyAddedSubscription}
-              close={handleClose}
+              close={() => setOpen(false)}
             />
           </Box>
         </Modal>

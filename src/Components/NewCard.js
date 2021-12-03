@@ -8,7 +8,7 @@ import validator from "validator";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 
-const NewCard = (props) => {
+const NewCard = ({addNew,close}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
   const [error, setError] = useState(null);
@@ -140,8 +140,8 @@ const NewCard = (props) => {
       const isOk = response.ok;
       return response.json().then((data) => {
         if (isOk) {
-          props.addNew();
-          props.close();
+          addNew();
+          close();
 
           let newSubscription = data;
 

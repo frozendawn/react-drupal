@@ -78,6 +78,25 @@ const UpdateCard = () => {
     });
   }, [id]);
 
+  //update user image function 
+  const updateSubscriptionImage = () => {
+    fetch(
+      `${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}/field_user_image`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Accept": "application/vnd.api+json",
+          "Content-Disposition": `file; filename="${imgFile.name}"`,
+          "X-OAuth-Authorization": `Bearer ${authCtx.token}`
+        },
+        body: imgFileBinary,
+      }
+    ).finally(() => {
+      history.replace(`/cards/${id}`);
+    });
+  }
+
   //update user data
 
   //submit form handler
@@ -115,22 +134,8 @@ const UpdateCard = () => {
 
           if (imgChanged) {
             //posting image if the rest of the data is updated successfully
-            //upload image
-            fetch(
-              `${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}/field_user_image`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/octet-stream",
-                  "Accept": "application/vnd.api+json",
-                  "Content-Disposition": `file; filename="${imgFile.name}"`,
-                  "X-OAuth-Authorization": `Bearer ${authCtx.token}`
-                },
-                body: imgFileBinary,
-              }
-            ).finally(() => {
-              history.replace(`/cards/${id}`);
-            });
+            //upload image + redirect user to the updated card
+            updateSubscriptionImage();
           } else {
             history.replace(`/cards/${id}`);
           }
