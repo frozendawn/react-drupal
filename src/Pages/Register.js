@@ -87,7 +87,6 @@ const Register = () => {
           >
             <Grid item>
               <TextField
-                id="outlined-basic"
                 label="Username"
                 name="username"
                 variant="outlined"
@@ -96,7 +95,6 @@ const Register = () => {
             </Grid>
             <Grid item>
               <TextField
-                id="outlined-basic"
                 label="Email"
                 name="email"
                 variant="outlined"
@@ -105,7 +103,6 @@ const Register = () => {
             </Grid>
             <Grid item>
               <TextField
-                id="outlined-basic"
                 label="Password"
                 name="password"
                 type="password"

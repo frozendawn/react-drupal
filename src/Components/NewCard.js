@@ -186,7 +186,6 @@ const NewCard = ({addNew,close}) => {
             name="email"
             error={invalidFields.email ? true : false}
             onBlur={setValuesOnBlurHandler}
-            id="standard-basic"
             label="Email"
             variant="standard"
           />
@@ -196,7 +195,6 @@ const NewCard = ({addNew,close}) => {
             name="firstName"
             error={invalidFields.firstName ? true : false}
             onBlur={setValuesOnBlurHandler}
-            id="standard-basic"
             label="First Name"
             variant="standard"
           />
@@ -206,7 +204,6 @@ const NewCard = ({addNew,close}) => {
             name="lastName"
             error={invalidFields.lastName ? true : false}
             onBlur={setValuesOnBlurHandler}
-            id="standard-basic"
             label="Last name"
             variant="standard"
           />
@@ -216,7 +213,6 @@ const NewCard = ({addNew,close}) => {
             name="description"
             error={invalidFields.description ? true : false}
             onBlur={setValuesOnBlurHandler}
-            id="standard-basic"
             label="Description"
             variant="standard"
           />

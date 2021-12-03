@@ -91,7 +91,6 @@ const Login = () => {
             <Grid item>
               <TextField
                 onBlur={onBlurHandler}
-                id="outlined-basic"
                 label="Username"
                 name="username"
                 variant="outlined"
@@ -100,7 +99,6 @@ const Login = () => {
             <Grid item>
               <TextField
                 onBlur={onBlurHandler}
-                id="outlined-basic"
                 label="Password"
                 name="password"
                 type="password"
