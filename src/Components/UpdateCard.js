@@ -48,7 +48,7 @@ const UpdateCard = () => {
 
   //fetch user data
   useEffect(() => {
-    fetch(`http://localhost:8080/node/${id}?_format=json`).then((data) => {
+    fetch(`${process.env.REACT_APP_API_DOMAIN}node/${id}?_format=json`).then((data) => {
       const isOk = data.ok;
       return data.json().then((data) => {
         if (isOk) {

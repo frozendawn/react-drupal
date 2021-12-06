@@ -4,20 +4,40 @@ import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
 import Error from "./Error";
 import { useEffect, useState } from "react";
-import validator from "validator";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
+import Joi from "joi"
 
-const NewCard = ({addNew,close}) => {
+
+const NewCard = ({addNew, close}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formIsValid, setFormIsValid] = useState(false);
+  console.log('formIsValid', formIsValid)
   const [error, setError] = useState(null);
   const authCtx = useContext(AuthContext);
 
   const [formFieldValues, setFormFieldValues] = useState({});
+  console.log('logging formFieldValues',formFieldValues)
   const [invalidFields, setInvalidFields] = useState({});
-
+  console.log('logging invalid fields', invalidFields)
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
+
+  const [errors, setErrors] = useState(null);
+  //console.log('logging errors:', errors)
+
+
+
+  const schema = Joi.object({
+    email: Joi.string().email({ tlds: {allow: false} }).required(),
+    firstName: Joi.string().min(1).max(20).required(),
+    lastName: Joi.string().required(),
+    description:Joi.string().min(1).max(250).required()
+  });
+
+
+
+
+
 
   const handleChange = (e) => {
 
@@ -68,52 +88,59 @@ const NewCard = ({addNew,close}) => {
     );
   }
 
-  const validateEmail = (email) => {
-    setInvalidFields((prevState) => {
-      return {
-        ...prevState,
-        email: validator.isEmail(email) ? null : "email is invalid",
-      };
-    });
-  };
 
-  const validateRequiredField = (str, name) => {
-    setInvalidFields((prevState) => {
-      return {
-        ...prevState,
-        [name]: str.length > 0 ? null : `${name} is invalid`,
-      };
-    });
-  };
 
+  const validateForm = () => {
+    
+    const result = schema.validate(formFieldValues,{
+      abortEarly:false
+    });
+    console.log('logging result in schema validate', result);
+    const { error } = result;
+    console.log('logging error in schema validate', error);
+    if (error) {
+      const errorData = {};
+      for (let item of error.details) {
+        const name = item.path[0];
+        const message = item.message;
+        errorData[name] = message;
+      }
+      setInvalidFields(errorData);
+      const convertedErrors = [];
+      for(const el of result.error.details){
+        convertedErrors.push(el.message);
+      }
+      //console.log('logging convertedErrors', convertedErrors)
+      setErrors(convertedErrors);
+      setFormIsValid(false);
+  
+    } else {
+      console.log('no errors')
+      setErrors(null);
+      setInvalidFields({});
+      setFormIsValid(true);
+    }
+  }
+
+
+
+// Update formFieldValues on Blur
   const setValuesOnBlurHandler = (e) => {
     setFormFieldValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
-
-    if (e.target.name === "email") {
-      validateEmail(e.target.value);
-    }
-
-    if (e.target.name !== "email") {
-      validateRequiredField(e.target.value, e.target.name);
-    }
   };
-
-  // Set formIsValid useEfect.
-  useEffect(() => {
-    const arr = Object.values(invalidFields);
-    const allEqual = (arr) => arr.every((v) => v === arr[0]);
-    if (allEqual(arr) && arr.length === 4) {
-      setFormIsValid(true);
-    } else {
-      setFormIsValid(false);
-    }
-  }, [invalidFields]);
 
   //Submit form handler.
   const submitFormHandler = (e) => {
     e.preventDefault();
+    validateForm();
+
+    if(!formIsValid){
+      console.log('form didnt submit')
+      return;
+    }
+    console.log('form did submit')
     setIsLoading(true);
 
     fetch(process.env.REACT_APP_JSONAPI_POST_PATCH, {
@@ -139,24 +166,20 @@ const NewCard = ({addNew,close}) => {
     }).then((response) => {
       const isOk = response.ok;
       return response.json().then((data) => {
-        if (isOk) {
-          addNew();
-          close();
 
-          let newSubscription = data;
-
-          if(newlyCreatedImage){
-            attachImageToSubscription(newSubscription.data.id)
-          }
-          
-        } else {
+        if(!isOk) {
           setError(data.errors);
           setIsLoading(false);
+        }
+        addNew();
+        close();
+        if(newlyCreatedImage){
+          attachImageToSubscription(data.data.id)
         }
       });
     });
   };
-
+//JSX RETURN
   return isLoading ? (
     <Grid
       sx={{ mt: 20, mb: 20 }}
@@ -176,9 +199,10 @@ const NewCard = ({addNew,close}) => {
       justifyContent="center"
       alignItems="center"
     >
-      {error &&
-        error.map((err, idx) => {
-          return <Error key={idx} error={err.detail} />;
+      
+      {errors &&
+        errors.map((err, idx) => {
+          return <Error key={idx} error={err} />;
         })}
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
@@ -227,7 +251,6 @@ const NewCard = ({addNew,close}) => {
           <Button
             type="submit"
             variant="contained"
-            disabled={formIsValid ? false : true}
             sx={{ mt: 2 }}
           >
             Submit

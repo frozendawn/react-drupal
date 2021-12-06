@@ -7,7 +7,7 @@ const MagicalButton = ({currentPage, fetchLimit, remaining, onClickHandler}) => 
   useEffect(() => {
     const fetchNextPage = async () => {
       const response = await fetch(
-        `http://localhost:8080/api/subscription/?page=${currentPage + 1}`
+        `${process.env.REACT_APP_API_DOMAIN}api/subscription/?page=${currentPage + 1}`
       );
       const data = await response.json();
       setNextPageData(data);

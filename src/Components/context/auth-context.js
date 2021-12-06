@@ -49,7 +49,7 @@ export const AuthContextProvider = (props) => {
     
     const initialName = localStorage.getItem('user')
     const [token, setToken] = useState(initialToken);
-    const [user, setUser] = useState({name: initialName,id:null});
+    const [user, setUser] = useState({name: initialName, id:null});
 
     const userIsLoggedIn = !!token;
 
@@ -64,7 +64,7 @@ export const AuthContextProvider = (props) => {
         }
     }
 
-    const loginHandler = (token,user,expirationTime) => {
+    const loginHandler = (token, user, expirationTime) => {
         setUser({
             name: user,
             id: user.uid

@@ -38,7 +38,7 @@ const Register = () => {
   const onSubmitHandler = (e) => {
     e.preventDefault();
     try {
-      fetch("http://localhost:8080/user/register?_format=json", {
+      fetch(`${process.env.REACT_APP_API_DOMAIN}user/register?_format=json`, {
         method: "POST",
         mode: "cors",
         body: JSON.stringify({
