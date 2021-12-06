@@ -3,35 +3,32 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
 import Error from "./Error";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import Joi from "joi"
 
 
 const NewCard = ({addNew, close}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formIsValid, setFormIsValid] = useState(false);
-  console.log('formIsValid', formIsValid)
+  const [isLoading, setIsLoading] = useState(false);  
   const [error, setError] = useState(null);
   const authCtx = useContext(AuthContext);
 
   const [formFieldValues, setFormFieldValues] = useState({});
-  console.log('logging formFieldValues',formFieldValues)
+  //console.log('logging formFieldValues',formFieldValues)
   const [invalidFields, setInvalidFields] = useState({});
-  console.log('logging invalid fields', invalidFields)
+  //console.log('logging invalid fields', invalidFields)
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
 
   const [errors, setErrors] = useState(null);
-  //console.log('logging errors:', errors)
-
+  console.log('logging errors:', errors)
 
 
   const schema = Joi.object({
     email: Joi.string().email({ tlds: {allow: false} }).required(),
     firstName: Joi.string().min(1).max(20).required(),
     lastName: Joi.string().required(),
-    description:Joi.string().min(1).max(250).required()
+    description: Joi.string().min(1).max(250).required()
   });
 
 
@@ -112,17 +109,15 @@ const NewCard = ({addNew, close}) => {
       }
       //console.log('logging convertedErrors', convertedErrors)
       setErrors(convertedErrors);
-      setFormIsValid(false);
+      return false
   
     } else {
       console.log('no errors')
       setErrors(null);
       setInvalidFields({});
-      setFormIsValid(true);
+      return true
     }
   }
-
-
 
 // Update formFieldValues on Blur
   const setValuesOnBlurHandler = (e) => {
@@ -134,7 +129,8 @@ const NewCard = ({addNew, close}) => {
   //Submit form handler.
   const submitFormHandler = (e) => {
     e.preventDefault();
-    validateForm();
+    const formIsValid = validateForm();
+    console.log('logging result of formIsValid',formIsValid)
 
     if(!formIsValid){
       console.log('form didnt submit')
@@ -200,10 +196,10 @@ const NewCard = ({addNew, close}) => {
       alignItems="center"
     >
       
-      {errors &&
+       {errors &&
         errors.map((err, idx) => {
           return <Error key={idx} error={err} />;
-        })}
+        })} 
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
