@@ -63,8 +63,7 @@ const SubscriptionsListing = () => {
   };
 
   const loadMoreHandler = () => {
-    setCurPage(prevState => prevState + 1);
-    // prevState++ ne raboti
+    setCurPage(prevState => ++prevState );
   };
 
   // Fetch total number of data for the first time the page renders
@@ -72,7 +71,7 @@ const SubscriptionsListing = () => {
     fetchTotalDataValue();
   }, []);
 
-  //fetch data for current page
+  //Fetch data for current page.
   useEffect(() => {
   fetchData();
   }, [curPage]);

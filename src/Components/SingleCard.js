@@ -11,17 +11,9 @@ import { IconButton } from "@mui/material";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 
-const SingleCard = ({id,author,created,firstName,lastName}) => {
+const SingleCard = ({id, author, created, firstName, lastName}) => {
   let history = useHistory();
   let authCtx = useContext(AuthContext);
-
-  const clickHandler = (e) => {
-    history.push(`/cards/${id}`);
-  };
-
-  const editHandler = (e) => {
-    history.push(`/cards/update/${id}`)
-  }
 
   const card = (
     <React.Fragment>
@@ -37,11 +29,11 @@ const SingleCard = ({id,author,created,firstName,lastName}) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" onClick={clickHandler}>
+        <Button size="small" onClick={() => {history.push(`/cards/${id}`)}}>
           Learn More
         </Button>
         {authCtx.isLoggedIn && author === authCtx.user.name ? (
-                <IconButton onClick={editHandler}>
+                <IconButton onClick={() => {history.push(`/cards/update/${id}`)}}>
                 <EditIcon/>
               </IconButton>
               )

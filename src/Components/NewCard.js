@@ -21,7 +21,7 @@ const NewCard = ({addNew,close}) => {
 
   const handleChange = (e) => {
 
-    //image fetch function
+    //Fetch image function.
 
     let reader = new FileReader();
 
@@ -100,7 +100,7 @@ const NewCard = ({addNew,close}) => {
     }
   };
 
-  // set form is valid use effect
+  // Set formIsValid useEfect.
   useEffect(() => {
     const arr = Object.values(invalidFields);
     const allEqual = (arr) => arr.every((v) => v === arr[0]);
@@ -111,7 +111,7 @@ const NewCard = ({addNew,close}) => {
     }
   }, [invalidFields]);
 
-  //submit form handler
+  //Submit form handler.
   const submitFormHandler = (e) => {
     e.preventDefault();
     setIsLoading(true);

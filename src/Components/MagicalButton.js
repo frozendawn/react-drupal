@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 
-const MagicalButton = ({currentPage,fetchLimit,remaining,onClickHandler}) => {
+const MagicalButton = ({currentPage, fetchLimit, remaining, onClickHandler}) => {
   const [nextPageData, setNextPageData] = useState([]);
 
   useEffect(() => {
