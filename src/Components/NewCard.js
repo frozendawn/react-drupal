@@ -11,18 +11,11 @@ import Joi from "joi"
 
 const NewCard = ({addNew, close}) => {
   const [isLoading, setIsLoading] = useState(false);  
-  const [error, setError] = useState(null);
   const authCtx = useContext(AuthContext);
-
   const [formFieldValues, setFormFieldValues] = useState({});
-  //console.log('logging formFieldValues',formFieldValues)
   const [invalidFields, setInvalidFields] = useState({});
-  //console.log('logging invalid fields', invalidFields)
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
-
   const [errors, setErrors] = useState(null);
-  console.log('logging errors:', errors)
-
 
   const schema = Joi.object({
     email: Joi.string().email({ tlds: {allow: false} }).required(),
@@ -30,10 +23,6 @@ const NewCard = ({addNew, close}) => {
     lastName: Joi.string().required(),
     description: Joi.string().min(1).max(250).required()
   });
-
-
-
-
 
 
   const handleChange = (e) => {
@@ -85,16 +74,12 @@ const NewCard = ({addNew, close}) => {
     );
   }
 
-
-
   const validateForm = () => {
     
     const result = schema.validate(formFieldValues,{
       abortEarly:false
     });
-    console.log('logging result in schema validate', result);
     const { error } = result;
-    console.log('logging error in schema validate', error);
     if (error) {
       const errorData = {};
       for (let item of error.details) {
@@ -107,12 +92,10 @@ const NewCard = ({addNew, close}) => {
       for(const el of result.error.details){
         convertedErrors.push(el.message);
       }
-      //console.log('logging convertedErrors', convertedErrors)
       setErrors(convertedErrors);
       return false
   
     } else {
-      console.log('no errors')
       setErrors(null);
       setInvalidFields({});
       return true
@@ -130,15 +113,10 @@ const NewCard = ({addNew, close}) => {
   const submitFormHandler = (e) => {
     e.preventDefault();
     const formIsValid = validateForm();
-    console.log('logging result of formIsValid',formIsValid)
-
     if(!formIsValid){
-      console.log('form didnt submit')
       return;
     }
-    console.log('form did submit')
     setIsLoading(true);
-
     fetch(process.env.REACT_APP_JSONAPI_POST_PATCH, {
       method: "POST",
       mode: "cors",
@@ -162,13 +140,17 @@ const NewCard = ({addNew, close}) => {
     }).then((response) => {
       const isOk = response.ok;
       return response.json().then((data) => {
-
         if(!isOk) {
-          setError(data.errors);
+          const convertedErrors = [];
+          for (const el of data.errors){
+            convertedErrors.push(el.detail)
+          }
+          setErrors(convertedErrors);
           setIsLoading(false);
+        }else {
+          addNew();
+          close();
         }
-        addNew();
-        close();
         if(newlyCreatedImage){
           attachImageToSubscription(data.data.id)
         }
