@@ -75,7 +75,6 @@ const NewCard = ({addNew, close}) => {
   }
 
   const validateForm = () => {
-    
     const result = schema.validate(formFieldValues,{
       abortEarly:false
     });
@@ -83,9 +82,7 @@ const NewCard = ({addNew, close}) => {
     if (error) {
       const errorData = {};
       for (let item of error.details) {
-        const name = item.path[0];
-        const message = item.message;
-        errorData[name] = message;
+        errorData[item.path[0]] = item.message
       }
       setInvalidFields(errorData);
       const convertedErrors = [];
@@ -94,7 +91,6 @@ const NewCard = ({addNew, close}) => {
       }
       setErrors(convertedErrors);
       return false
-  
     } else {
       setErrors(null);
       setInvalidFields({});
