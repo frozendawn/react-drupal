@@ -6,27 +6,27 @@ import Error from "./Error";
 import { useState } from "react";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
-import Joi from "joi"
+import Joi from "joi";
 
-
-const NewCard = ({addNew, close}) => {
-  const [isLoading, setIsLoading] = useState(false);  
+const NewCard = ({ addNew, close }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const authCtx = useContext(AuthContext);
   const [formFieldValues, setFormFieldValues] = useState({});
   const [invalidFields, setInvalidFields] = useState({});
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
-  const [errors, setErrors] = useState(null);
+  const [errors, setErrors] = useState([]);
 
   const schema = Joi.object({
-    email: Joi.string().email({ tlds: {allow: false} }).required(),
-    firstName: Joi.string().min(1).max(20).required(),
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required(),
+    firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    description: Joi.string().min(1).max(250).required()
+    description: Joi.string().min(10).max(250).required()
   });
 
 
   const handleChange = (e) => {
-
     //Fetch image function.
 
     let reader = new FileReader();
@@ -36,20 +36,17 @@ const NewCard = ({addNew, close}) => {
     reader.onload = () => {
       const arrayBuffer = reader.result; // array buffer
 
-      fetch(
-        `${process.env.REACT_APP_JSONAPI_POST_PATCH}field_user_image`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "application/vnd.api+json",
-            "Content-Type": "application/octet-stream",
-            "Content-Disposition": `file; filename="${e.target.files[0].name}"`,
-            "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
-            "X-OAuth-Authorization": `Bearer ${authCtx.token}`
-          },
-          body: arrayBuffer,
-        }
-      ).then((result) => {
+      fetch(`${process.env.REACT_APP_JSONAPI_POST_PATCH}field_user_image`, {
+        method: "POST",
+        headers: {
+          Accept: "application/vnd.api+json",
+          "Content-Type": "application/octet-stream",
+          "Content-Disposition": `file; filename="${e.target.files[0].name}"`,
+          "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+          "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
+        },
+        body: arrayBuffer,
+      }).then((result) => {
         return result.json().then((data) => {
           setNewlyCreatedImage(data);
         });
@@ -64,41 +61,34 @@ const NewCard = ({addNew, close}) => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/vnd.api+json",
-          "Accept": "application/vnd.api+json",
-          "X-OAuth-Authorization": `Bearer ${authCtx.token}`
+          Accept: "application/vnd.api+json",
+          "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
         },
         body: JSON.stringify({
           data: newlyCreatedImage.data,
         }),
       }
     );
-  }
+  };
 
   const validateForm = () => {
-    const result = schema.validate(formFieldValues,{
-      abortEarly:false
-    });
-    const { error } = result;
-    if (error) {
-      const errorData = {};
-      for (let item of error.details) {
-        errorData[item.path[0]] = item.message
-      }
-      setInvalidFields(errorData);
-      const convertedErrors = [];
-      for(const el of result.error.details){
-        convertedErrors.push(el.message);
-      }
-      setErrors(convertedErrors);
-      return false
-    } else {
-      setErrors(null);
-      setInvalidFields({});
-      return true
-    }
-  }
+    const { error } = schema.validate(formFieldValues, { abortEarly: false });  
+    const { details = [] } =  error || [];
 
-// Update formFieldValues on Blur
+    const errorData = {};
+    const convertedErrors = [];
+
+    for (let item of details) {
+      errorData[item.path[0]] = item.message;
+      convertedErrors.push(item.message);
+    }
+    setInvalidFields(errorData);
+    setErrors(convertedErrors);
+
+    return convertedErrors.length > 0;
+  };
+
+  // Update formFieldValues on Blur
   const setValuesOnBlurHandler = (e) => {
     setFormFieldValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
@@ -108,19 +98,20 @@ const NewCard = ({addNew, close}) => {
   //Submit form handler.
   const submitFormHandler = (e) => {
     e.preventDefault();
-    const formIsValid = validateForm();
-    if(!formIsValid){
-      return;
+    
+    if(validateForm()){
+      return
     }
+    
     setIsLoading(true);
     fetch(process.env.REACT_APP_JSONAPI_POST_PATCH, {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/vnd.api+json",
-        "Accept": "application/vnd.api+json",
-        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,  
-        "X-OAuth-Authorization": `Bearer ${authCtx.token}`
+        Accept: "application/vnd.api+json",
+        "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+        "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
       },
       body: JSON.stringify({
         data: {
@@ -130,30 +121,30 @@ const NewCard = ({addNew, close}) => {
             title: formFieldValues.firstName,
             field_last_name: formFieldValues.lastName,
             field_description: formFieldValues.description,
-          }
+          },
         },
       }),
     }).then((response) => {
       const isOk = response.ok;
       return response.json().then((data) => {
-        if(!isOk) {
+        if (!isOk) {
           const convertedErrors = [];
-          for (const el of data.errors){
-            convertedErrors.push(el.detail)
+          for (const el of data.errors) {
+            convertedErrors.push(el.detail);
           }
           setErrors(convertedErrors);
           setIsLoading(false);
-        }else {
+        } else {
           addNew();
           close();
         }
-        if(newlyCreatedImage){
-          attachImageToSubscription(data.data.id)
+        if (newlyCreatedImage) {
+          attachImageToSubscription(data.data.id);
         }
       });
     });
   };
-//JSX RETURN
+  //JSX RETURN
   return isLoading ? (
     <Grid
       sx={{ mt: 20, mb: 20 }}
@@ -173,11 +164,10 @@ const NewCard = ({addNew, close}) => {
       justifyContent="center"
       alignItems="center"
     >
-      
-       {errors &&
+      {errors &&
         errors.map((err, idx) => {
           return <Error key={idx} error={err} />;
-        })} 
+        })}
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
@@ -222,11 +212,7 @@ const NewCard = ({addNew, close}) => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ mt: 2 }}
-          >
+          <Button type="submit" variant="contained" sx={{ mt: 2 }}>
             Submit
           </Button>
         </Grid>

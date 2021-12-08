@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useContext } from "react";
 import AuthContext from "../Components/context/auth-context";
 import { useHistory } from "react-router";
-import { useEffect } from "react";
 import Error from "../Components/Error";
 
 const Login = () => {
@@ -14,7 +13,6 @@ const Login = () => {
 
   const [formValues, setFormValues] = useState({});
   const [error, setError] = useState(null);
-  const [formIsValid, setFormIsValid] = useState(false);
 
   const onBlurHandler = (e) => {
     setFormValues((prevState) => {
@@ -54,19 +52,6 @@ const Login = () => {
       });
     });
   };
-
-  useEffect(() => {
-    if (
-      formValues.username &&
-      formValues.username.trim().length > 0 &&
-      formValues.password &&
-      formValues.password.trim().length > 0
-    ) {
-      setFormIsValid(true);
-    } else {
-      setFormIsValid(false);
-    }
-  }, [formValues.username, formValues.password]);
 
   return (
     <Grid
@@ -109,7 +94,6 @@ const Login = () => {
             <Grid item style={{ width: "100%" }}>
               <Button
                 fullWidth
-                disabled={formIsValid ? false : true}
                 type="submit"
                 variant="contained"
               >

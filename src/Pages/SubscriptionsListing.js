@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import React from "react";
 import { Grid } from "@mui/material";
 import SingleCard from "../Components/SingleCard";
@@ -29,30 +29,30 @@ const SubscriptionsListing = () => {
 
   const [open, setOpen] = useState(false);
   // fetchData function
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     fetch(`${process.env.REACT_APP_API_URL}?page=${curPage}`)
-      .then((data) => data.json())
-      .then((data) => {
-        const convertedData = [];
+    .then((data) => data.json())
+    .then((data) => {
+      const convertedData = [];
 
-        for (let key in data) {
-          let dataKey = data[key];
-          convertedData.push({
-            id: dataKey.nid,
-            author: dataKey.uid,
-            created: dataKey.created,
-            firstName: dataKey.title,
-            lastName: dataKey.field_last_name,
-            description: dataKey.field_description
-          });
-        }
-
-        setStoredData((prevState) => {
-          let updatedArray = [...prevState, ...convertedData];
-          return updatedArray;
+      for (let key in data) {
+        let dataKey = data[key];
+        convertedData.push({
+          id: dataKey.nid,
+          author: dataKey.uid,
+          created: dataKey.created,
+          firstName: dataKey.title,
+          lastName: dataKey.field_last_name,
+          description: dataKey.field_description,
         });
+      }
+
+      setStoredData((prevState) => {
+        let updatedArray = [...prevState, ...convertedData];
+        return updatedArray;
       });
-  };
+    });
+  },[curPage])
 
   // fetch total amount of data function
 
@@ -63,7 +63,7 @@ const SubscriptionsListing = () => {
   };
 
   const loadMoreHandler = () => {
-    setCurPage(prevState => ++prevState );
+    setCurPage((prevState) => ++prevState);
   };
 
   // Fetch total number of data for the first time the page renders
@@ -73,21 +73,20 @@ const SubscriptionsListing = () => {
 
   //Fetch data for current page.
   useEffect(() => {
-  fetchData();
-  }, [curPage]);
+    fetchData();
+  }, [curPage,fetchData]);
 
+  const newlyAddedSubscription = () => {
+    if (curPage !== 0) {
+      setCurPage(0);
+    }
 
- const newlyAddedSubscription = () => {
-   if(curPage !== 0 ){
-    setCurPage(0);
-   }
-
-   if(curPage === 0) {
-     fetchData();
-   }
-   setStoredData([]);
-   fetchTotalDataValue();
- }
+    if (curPage === 0) {
+      fetchData();
+    }
+    setStoredData([]);
+    fetchTotalDataValue();
+  };
 
   return (
     <div>
@@ -99,7 +98,6 @@ const SubscriptionsListing = () => {
           spacing={3}
           sx={{ mt: 5 }}
         >
-
           <Grid container spacing={3}>
             {storedData.map((el) => {
               return (
