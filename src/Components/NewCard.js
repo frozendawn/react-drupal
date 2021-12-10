@@ -16,19 +16,55 @@ const NewCard = ({ addNew, close }) => {
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
   const [errors, setErrors] = useState([]);
 
+  //isSad function
+  const isSad = async (value) => {
+    return await fetch(process.env.REACT_APP_TEXT_TO_EMOTION_API, {
+      method: "POST",
+      headers: {
+        apikey: process.env.REACT_APP_TEXT_TO_EMOTION_API_KEY,
+      },
+      body: value,
+    })
+      .then((data) => {
+        return data.json();
+      })
+      .then((data) => {
+        //Checking if the description is sad and returning true if it is
+        if (data.Sad > 0.49) {
+          setInvalidFields((prevState) => {
+            return {
+              ...prevState,
+              description: "Your description is too sad please redact it",
+            };
+          });
+          setErrors((prevState) => {
+            return [...prevState, "Description is too sad"];
+          });
+          return true;
+        }
+        //If the description isn't sad returning false
+        else {
+          setInvalidFields({});
+          setErrors([]);
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.log("logging the error in catch", error);
+      });
+  };
+
   const schema = Joi.object({
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    description: Joi.string().min(10).max(250).required()
+    description: Joi.string().min(10).max(250).required(),
   });
 
-
+  //Fetch image function.
   const handleChange = (e) => {
-    //Fetch image function.
-
     let reader = new FileReader();
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -54,6 +90,7 @@ const NewCard = ({ addNew, close }) => {
     };
   };
 
+  //Attach image to subscription function
   const attachImageToSubscription = (id) => {
     fetch(
       `${process.env.REACT_APP_JSONAPI_POST_PATCH}${id}/relationships/field_user_image`,
@@ -71,9 +108,10 @@ const NewCard = ({ addNew, close }) => {
     );
   };
 
-  const validateForm = () => {
-    const { error } = schema.validate(formFieldValues, { abortEarly: false });  
-    const { details = [] } =  error || [];
+  //Validate form function, it basically validates the formFieldValues and returns true or false if the form is valid or not.
+  const validateForm = async () => {
+    const { error } = schema.validate(formFieldValues, { abortEarly: false });
+    const { details = [] } = error || [];
 
     const errorData = {};
     const convertedErrors = [];
@@ -85,7 +123,11 @@ const NewCard = ({ addNew, close }) => {
     setInvalidFields(errorData);
     setErrors(convertedErrors);
 
-    return convertedErrors.length > 0;
+    if (convertedErrors.length === 0) {
+      const result = await isSad(formFieldValues.description);
+      return !result;
+    }
+    return false;
   };
 
   // Update formFieldValues on Blur
@@ -96,14 +138,15 @@ const NewCard = ({ addNew, close }) => {
   };
 
   //Submit form handler.
-  const submitFormHandler = (e) => {
+  const submitFormHandler = async (e) => {
     e.preventDefault();
-    
-    if(validateForm()){
-      return
-    }
-    
     setIsLoading(true);
+
+    if ((await validateForm()) === false) {
+      setIsLoading(false);
+      return;
+    }
+
     fetch(process.env.REACT_APP_JSONAPI_POST_PATCH, {
       method: "POST",
       mode: "cors",
@@ -145,19 +188,7 @@ const NewCard = ({ addNew, close }) => {
     });
   };
   //JSX RETURN
-  return isLoading ? (
-    <Grid
-      sx={{ mt: 20, mb: 20 }}
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Grid item xs={12}>
-        <Spinner />
-      </Grid>
-    </Grid>
-  ) : (
+  return (
     <Grid
       container
       direction="column"
@@ -168,6 +199,7 @@ const NewCard = ({ addNew, close }) => {
         errors.map((err, idx) => {
           return <Error key={idx} error={err} />;
         })}
+      {isLoading && <Spinner />}
       <form onSubmit={submitFormHandler}>
         <Grid item xs={12}>
           <TextField
