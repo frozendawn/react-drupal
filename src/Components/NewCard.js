@@ -16,7 +16,7 @@ const NewCard = ({ addNew, close }) => {
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
   const [errors, setErrors] = useState([]);
 
-  //isSad function
+  //isSadd() function
   const isSad = async (value) => {
     return await fetch(process.env.REACT_APP_TEXT_TO_EMOTION_API, {
       method: "POST",
@@ -29,30 +29,19 @@ const NewCard = ({ addNew, close }) => {
         return data.json();
       })
       .then((data) => {
-        //Checking if the description is sad and returning true if it is
+        // checking api response and returning true if sad or false if not 
         if (data.Sad > 0.49) {
-          setInvalidFields((prevState) => {
-            return {
-              ...prevState,
-              description: "Your description is too sad please redact it",
-            };
-          });
-          setErrors((prevState) => {
-            return [...prevState, "Description is too sad"];
-          });
+          setInvalidFields({description: "Your description is too sad please redact it"});
+          setErrors(["Description is too sad"])
           return true;
         }
-        //If the description isn't sad returning false
-        else {
-          setInvalidFields({});
-          setErrors([]);
           return false;
-        }
       })
       .catch((error) => {
         console.log("logging the error in catch", error);
       });
   };
+
 
   const schema = Joi.object({
     email: Joi.string()
@@ -64,7 +53,7 @@ const NewCard = ({ addNew, close }) => {
   });
 
   //Fetch image function.
-  const handleChange = (e) => {
+  const uploadImageFileHandler = (e) => {
     let reader = new FileReader();
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -142,7 +131,7 @@ const NewCard = ({ addNew, close }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if ((await validateForm()) === false) {
+    if (!(await validateForm())) {
       setIsLoading(false);
       return;
     }
@@ -169,7 +158,8 @@ const NewCard = ({ addNew, close }) => {
       }),
     }).then((response) => {
       const isOk = response.ok;
-      return response.json().then((data) => {
+      return response.json()
+      .then((data) => {
         if (!isOk) {
           const convertedErrors = [];
           for (const el of data.errors) {
@@ -177,13 +167,14 @@ const NewCard = ({ addNew, close }) => {
           }
           setErrors(convertedErrors);
           setIsLoading(false);
-        } else {
-          addNew();
-          close();
+          return
         }
+        //if the user uploaded image attach it to the newlycreated subscription
         if (newlyCreatedImage) {
           attachImageToSubscription(data.data.id);
         }
+          addNew();
+          close();
       });
     });
   };
@@ -238,7 +229,7 @@ const NewCard = ({ addNew, close }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" component="label" onChange={handleChange}>
+          <Button variant="contained" component="label" onChange={uploadImageFileHandler}>
             Upload File
             <input type="file" hidden name="image" />
           </Button>
