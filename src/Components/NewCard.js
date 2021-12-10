@@ -16,7 +16,6 @@ const NewCard = ({ addNew, close }) => {
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
   const [errors, setErrors] = useState([]);
 
-  //isSadd() function
   const isSad = async (value) => {
     return await fetch(process.env.REACT_APP_TEXT_TO_EMOTION_API, {
       method: "POST",
@@ -25,31 +24,30 @@ const NewCard = ({ addNew, close }) => {
       },
       body: value,
     })
-      .then((data) => {
+      .then(data => {
         return data.json();
       })
-      .then((data) => {
-        // checking api response and returning true if sad or false if not 
-        if (data.Sad > 0.49) {
-          setInvalidFields({description: "Your description is too sad please redact it"});
-          setErrors(["Description is too sad"])
-          return true;
-        }
-          return false;
+      .then(data => {
+        // Checking api response and returning true if sad or false if not.
+        return data.Sad > 0.49
       })
       .catch((error) => {
         console.log("logging the error in catch", error);
       });
   };
 
-
   const schema = Joi.object({
     email: Joi.string()
       .email({ tlds: { allow: false } })
       .required(),
-    firstName: Joi.string().required(),
-    lastName: Joi.string().required(),
-    description: Joi.string().min(10).max(250).required(),
+    firstName: Joi.string()
+    .required(),
+    lastName: Joi.string()
+    .required(),
+    description: Joi.string()
+    .min(10)
+    .max(250)
+    .required(),
   });
 
   //Fetch image function.
@@ -71,15 +69,16 @@ const NewCard = ({ addNew, close }) => {
           "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
         },
         body: arrayBuffer,
-      }).then((result) => {
-        return result.json().then((data) => {
+      }).then(result => {
+        result.json()
+        .then(data => {
           setNewlyCreatedImage(data);
         });
       });
     };
   };
 
-  //Attach image to subscription function
+  //Attach image to subscription function.
   const attachImageToSubscription = (id) => {
     fetch(
       `${process.env.REACT_APP_JSONAPI_POST_PATCH}${id}/relationships/field_user_image`,
@@ -109,14 +108,18 @@ const NewCard = ({ addNew, close }) => {
       errorData[item.path[0]] = item.message;
       convertedErrors.push(item.message);
     }
+
+    if (convertedErrors.length === 0) {
+      let isMoodSad = await isSad(formFieldValues.description);
+      if (isMoodSad) {
+        errorData.description = "Your description is too sad please redact it";
+        convertedErrors.push("Description is too sad");
+      }
+    }
     setInvalidFields(errorData);
     setErrors(convertedErrors);
 
-    if (convertedErrors.length === 0) {
-      const result = await isSad(formFieldValues.description);
-      return !result;
-    }
-    return false;
+    return convertedErrors.length > 0;
   };
 
   // Update formFieldValues on Blur
@@ -131,7 +134,7 @@ const NewCard = ({ addNew, close }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    if (!(await validateForm())) {
+    if (await validateForm()) {
       setIsLoading(false);
       return;
     }
@@ -159,7 +162,7 @@ const NewCard = ({ addNew, close }) => {
     }).then((response) => {
       const isOk = response.ok;
       return response.json()
-      .then((data) => {
+      .then(data => {
         if (!isOk) {
           const convertedErrors = [];
           for (const el of data.errors) {
@@ -167,14 +170,14 @@ const NewCard = ({ addNew, close }) => {
           }
           setErrors(convertedErrors);
           setIsLoading(false);
-          return
+          return;
         }
         //if the user uploaded image attach it to the newlycreated subscription
         if (newlyCreatedImage) {
           attachImageToSubscription(data.data.id);
         }
-          addNew();
-          close();
+        addNew();
+        close();
       });
     });
   };
@@ -229,7 +232,11 @@ const NewCard = ({ addNew, close }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" component="label" onChange={uploadImageFileHandler}>
+          <Button
+            variant="contained"
+            component="label"
+            onChange={uploadImageFileHandler}
+          >
             Upload File
             <input type="file" hidden name="image" />
           </Button>
