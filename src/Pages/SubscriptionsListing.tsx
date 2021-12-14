@@ -10,7 +10,7 @@ import Modal from "@mui/material/Modal";
 import { Container } from "@mui/material";
 
 const style = {
-  position: "absolute",
+  position: 'absolute' as 'absolute',
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -20,6 +20,15 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+interface ConvertedData {
+  id: string;
+  author: string;
+  created: string;
+  firstName: string;
+  lastName: string;
+  description: string;
+}
 
 const SubscriptionsListing = () => {
   const [curPage, setCurPage] = useState(0);
@@ -33,7 +42,7 @@ const SubscriptionsListing = () => {
     fetch(`${process.env.REACT_APP_API_URL}?page=${curPage}`)
     .then((data) => data.json())
     .then((data) => {
-      const convertedData = [];
+      const convertedData : Array<ConvertedData> = [];
 
       for (let key in data) {
         let dataKey = data[key];
@@ -105,7 +114,6 @@ const SubscriptionsListing = () => {
                   <SingleCard
                     firstName={el.firstName}
                     lastName={el.lastName}
-                    description={el.description}
                     id={el.id}
                     created={el.created}
                     author={el.author}
@@ -128,7 +136,6 @@ const SubscriptionsListing = () => {
               <Button
                 variant="outlined"
                 onClick={() => setOpen(true)}
-                margin="normal"
                 sx={{ mt: 3, ml: 3 }}
               >
                 Add new

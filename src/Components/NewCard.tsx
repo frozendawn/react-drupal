@@ -3,24 +3,43 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Spinner from "./Spinner";
 import Error from "./Error";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 import Joi from "joi";
 
-const NewCard = ({ addNew, close }) => {
+interface Props {
+  addNew: () => void;
+  close: () => void;
+}
+
+interface FormFieldValues {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    description?: string;
+}
+
+interface InvalidFields {
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    description?: string;
+}
+
+const NewCard: React.FC<Props> = ({ addNew, close }) => {
   const [isLoading, setIsLoading] = useState(false);
   const authCtx = useContext(AuthContext);
-  const [formFieldValues, setFormFieldValues] = useState({});
-  const [invalidFields, setInvalidFields] = useState({});
+  const [formFieldValues, setFormFieldValues] = useState<FormFieldValues>({});
+  const [invalidFields, setInvalidFields] = useState<InvalidFields>({});
   const [newlyCreatedImage, setNewlyCreatedImage] = useState(null);
   const [errors, setErrors] = useState([]);
 
-  const isSad = async (value) => {
-    return await fetch(process.env.REACT_APP_TEXT_TO_EMOTION_API, {
+  const isSad = async (value: string) => {
+    return await fetch(process.env.REACT_APP_TEXT_TO_EMOTION_API as string, {
       method: "POST",
       headers: {
-        apikey: process.env.REACT_APP_TEXT_TO_EMOTION_API_KEY,
+        apikey: process.env.REACT_APP_TEXT_TO_EMOTION_API_KEY as string,
       },
       body: value,
     })
@@ -51,7 +70,7 @@ const NewCard = ({ addNew, close }) => {
   });
 
   //Fetch image function.
-  const uploadImageFileHandler = (e) => {
+  const uploadImageFileHandler = (e: any) => {
     let reader = new FileReader();
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -59,13 +78,13 @@ const NewCard = ({ addNew, close }) => {
     reader.onload = () => {
       const arrayBuffer = reader.result; // array buffer
 
-      fetch(`${process.env.REACT_APP_JSONAPI_POST_PATCH}field_user_image`, {
+      fetch(`${process.env.REACT_APP_JSONAPI_POST_PATCH as string}field_user_image`, {
         method: "POST",
         headers: {
           Accept: "application/vnd.api+json",
           "Content-Type": "application/octet-stream",
           "Content-Disposition": `file; filename="${e.target.files[0].name}"`,
-          "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN,
+          "X-CSRF-Token": process.env.REACT_APP_CRF_TOKEN as string,
           "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
         },
         body: arrayBuffer,
@@ -79,7 +98,7 @@ const NewCard = ({ addNew, close }) => {
   };
 
   //Attach image to subscription function.
-  const attachImageToSubscription = (id) => {
+  const attachImageToSubscription = (id: string) => {
     fetch(
       `${process.env.REACT_APP_JSONAPI_POST_PATCH}${id}/relationships/field_user_image`,
       {
@@ -90,18 +109,19 @@ const NewCard = ({ addNew, close }) => {
           "X-OAuth-Authorization": `Bearer ${authCtx.token}`,
         },
         body: JSON.stringify({
-          data: newlyCreatedImage.data,
-        }),
+          data: newlyCreatedImage.data
+        })
       }
     );
   };
 
   //Validate form function, it basically validates the formFieldValues and returns true or false if the form is valid or not.
   const validateForm = async () => {
-    const { error } = schema.validate(formFieldValues, { abortEarly: false });
+    const { error }: {error: any } = schema.validate(formFieldValues, { abortEarly: false });
+    console.log('logging error details structure', schema.validate(formFieldValues, { abortEarly: false }))
     const { details = [] } = error || [];
 
-    const errorData = {};
+    const errorData: any = {};
     const convertedErrors = [];
 
     for (let item of details) {
@@ -123,14 +143,14 @@ const NewCard = ({ addNew, close }) => {
   };
 
   // Update formFieldValues on Blur
-  const setValuesOnBlurHandler = (e) => {
+  const setValuesOnBlurHandler = (e: any) => {
     setFormFieldValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
   };
 
   //Submit form handler.
-  const submitFormHandler = async (e) => {
+  const submitFormHandler = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
 

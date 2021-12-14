@@ -3,11 +3,11 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { Typography } from "@mui/material";
 
-const Error = ({error}) => {
+const Error: React.FC<{error: string}> = ({error}) => {
   return (
     <Alert severity="error">
       <AlertTitle>Error</AlertTitle>
-      <Typography variant="p">
+      <Typography variant="body1">
         {error}
       </Typography>
     </Alert>
