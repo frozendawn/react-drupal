@@ -7,10 +7,18 @@ import { useParams } from "react-router";
 import Spinner from "../Components/Spinner";
 import { CardMedia } from "@mui/material";
 
+interface FoundCard {
+  firstName: string;
+  lastName: string;
+  description: string;
+  image: string;
+  alt: string;
+}
+
 const CardDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
-  let { id } = useParams();
-  const [foundCard, setFoundCard] = useState({});
+  let { id }: {id: string} = useParams();
+  const [foundCard, setFoundCard] = useState<Partial<FoundCard>>({});
   let { firstName, lastName, description, image, alt} = foundCard;
   let [error, setError] = useState(null);
 
