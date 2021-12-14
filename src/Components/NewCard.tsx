@@ -70,7 +70,7 @@ const NewCard: React.FC<Props> = ({ addNew, close }) => {
   });
 
   //Fetch image function.
-  const uploadImageFileHandler = (e: any) => {
+  const uploadImageFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     let reader = new FileReader();
 
     reader.readAsArrayBuffer(e.target.files[0]);
@@ -143,14 +143,14 @@ const NewCard: React.FC<Props> = ({ addNew, close }) => {
   };
 
   // Update formFieldValues on Blur
-  const setValuesOnBlurHandler = (e: any) => {
+  const setValuesOnBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
     setFormFieldValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
   };
 
   //Submit form handler.
-  const submitFormHandler = async (e: any) => {
+  const submitFormHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -192,7 +192,7 @@ const NewCard: React.FC<Props> = ({ addNew, close }) => {
           setIsLoading(false);
           return;
         }
-        //if the user uploaded image attach it to the newlycreated subscription
+        //Only if the user has uploaded an image then I attach it to the the newlycreated subscription.
         if (newlyCreatedImage) {
           attachImageToSubscription(data.data.id);
         }
@@ -255,10 +255,9 @@ const NewCard: React.FC<Props> = ({ addNew, close }) => {
           <Button
             variant="contained"
             component="label"
-            onChange={uploadImageFileHandler}
           >
             Upload File
-            <input type="file" hidden name="image" />
+            <input type="file" hidden name="image" onChange={uploadImageFileHandler}/>
           </Button>
         </Grid>
         <Grid item xs={12}>

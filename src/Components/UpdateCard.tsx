@@ -1,19 +1,26 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Button } from "@mui/material";
-import { useParams } from "react-router";
-import { useHistory } from "react-router";
+import { useParams, useHistory } from "react-router";
 import Error from "./Error";
 import { useContext } from "react";
 import AuthContext from "./context/auth-context";
 
+interface FormFieldValues {
+  email: string;
+  firstName: string;
+  lastName: string;
+  description: string;
+  uuid: string;
+}
+
 const UpdateCard = () => {
-  let { id } = useParams();
+  let { id }: {id: string} = useParams();
   const history = useHistory();
   const authCtx = useContext(AuthContext)
 
-  const [formFieldValues, setFormFieldValues] = useState({});
+  const [formFieldValues, setFormFieldValues] = useState<Partial<FormFieldValues>>({});
   const [error, setError] = useState(null);
   const [imgFile, setImgFile] = useState(null);
   const [imgFileBinary, setImgFileBinary] = useState(null);
@@ -22,7 +29,7 @@ const UpdateCard = () => {
 
   //onChange handler for image field
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     setImgFile(e.target.files[0]);
 
     //Convert our file into Array Buffer
@@ -40,7 +47,7 @@ const UpdateCard = () => {
   };
 
   //update values on input change
-  const setValuesOnChangeHandler = (e) => {
+  const setValuesOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormFieldValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
@@ -98,7 +105,7 @@ const UpdateCard = () => {
   //update user data
 
   //submit form handler
-  const submitFormHandler = (e) => {
+  const submitFormHandler = (e: React.FormEvent) => {
     e.preventDefault();
 
     fetch(

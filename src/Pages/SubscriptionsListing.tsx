@@ -10,7 +10,7 @@ import Modal from "@mui/material/Modal";
 import { Container } from "@mui/material";
 
 const style = {
-  position: 'absolute' as 'absolute',
+  position: "absolute" as "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -37,33 +37,33 @@ const SubscriptionsListing = () => {
   const fetchLimit = 3;
 
   const [open, setOpen] = useState(false);
-  // fetchData function
+  // Function which fetches data received from drupal for the current page.
   const fetchData = useCallback(() => {
     fetch(`${process.env.REACT_APP_API_URL}?page=${curPage}`)
-    .then((data) => data.json())
-    .then((data) => {
-      const convertedData : Array<ConvertedData> = [];
+      .then((data) => data.json())
+      .then((data) => {
+        const convertedData: Array<ConvertedData> = [];
 
-      for (let key in data) {
-        let dataKey = data[key];
-        convertedData.push({
-          id: dataKey.nid,
-          author: dataKey.uid,
-          created: dataKey.created,
-          firstName: dataKey.title,
-          lastName: dataKey.field_last_name,
-          description: dataKey.field_description,
+        for (let key in data) {
+          let dataKey = data[key];
+          convertedData.push({
+            id: dataKey.nid,
+            author: dataKey.uid,
+            created: dataKey.created,
+            firstName: dataKey.title,
+            lastName: dataKey.field_last_name,
+            description: dataKey.field_description,
+          });
+        }
+
+        setStoredData((prevState) => {
+          let updatedArray = [...prevState, ...convertedData];
+          return updatedArray;
         });
-      }
-
-      setStoredData((prevState) => {
-        let updatedArray = [...prevState, ...convertedData];
-        return updatedArray;
       });
-    });
-  },[curPage])
+  }, [curPage]);
 
-  // fetch total amount of data function
+  // Function which fetches the length of the total amount of data stored in drupal.
 
   const fetchTotalDataValue = () => {
     fetch(process.env.REACT_APP_API_FETCH_TOTAL_DATA)
@@ -75,7 +75,7 @@ const SubscriptionsListing = () => {
     setCurPage((prevState) => ++prevState);
   };
 
-  // Fetch total number of data for the first time the page renders
+  // Set the total data amount for the fist time the page renders.
   useEffect(() => {
     fetchTotalDataValue();
   }, []);
@@ -83,7 +83,7 @@ const SubscriptionsListing = () => {
   //Fetch data for current page.
   useEffect(() => {
     fetchData();
-  }, [curPage,fetchData]);
+  }, [curPage, fetchData]);
 
   const newlyAddedSubscription = () => {
     if (curPage !== 0) {
