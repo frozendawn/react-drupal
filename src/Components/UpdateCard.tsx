@@ -57,8 +57,9 @@ const UpdateCard = () => {
   useEffect(() => {
     fetch(`${process.env.REACT_APP_API_DOMAIN}node/${id}?_format=json`).then((data) => {
       const isOk = data.ok;
-      return data.json().then((data) => {
+      return data.json().then((data)=> {
         if (isOk) {
+          console.log('logging returned data',data)
           setFormFieldValues({
             email: data["field_email"][0].value,
             firstName: data["title"][0].value,
@@ -108,8 +109,7 @@ const UpdateCard = () => {
   const submitFormHandler = (e: React.FormEvent) => {
     e.preventDefault();
 
-    fetch(
-      `${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}`,
+    fetch(`${process.env.REACT_APP_JSONAPI_POST_PATCH}${formFieldValues.uuid}`,
       {
         method: "PATCH",
         mode: "cors",

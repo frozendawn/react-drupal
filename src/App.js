@@ -8,6 +8,8 @@ import AuthContext from "./Components/context/auth-context";
 import { Redirect } from "react-router";
 import UpdateCard from "./Components/UpdateCard";
 import Navbar from "./Components/Navbar";
+import Listings from "./Pages/Listings";
+import NewListing from "./Pages/NewListing";
 
 function App() {
   const authCtx = useContext(AuthContext);
@@ -23,6 +25,15 @@ function App() {
             <Redirect to="/login" />
           )}
         </Route>
+
+        <Route path="/listings">
+            <Listings/>
+        </Route>
+
+
+        <Route path="/new-listing" exact>
+            <NewListing/>
+          </Route>
 
         {authCtx.isLoggedIn && [
           <Route path="/cards/update/:id" exact key="/cards/update/:id">

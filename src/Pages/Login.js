@@ -40,7 +40,9 @@ const Login = () => {
     }).then((data) => {
       const isOk = data.ok;
       return data.json().then((data) => {
+        console.log('logging data for logged in user',data)
         if (isOk) {
+          // Creates a date(basically in the future) by first converting the current date time to milliseconds then adds the expiration time in milliseconds.
           const expirationTime = new Date(
             new Date().getTime() + (+data.expires_in * 1000)
           );

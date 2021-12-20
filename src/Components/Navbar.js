@@ -17,6 +17,7 @@ const Navbar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Cards
           </Typography>
+          <Button color="inherit" onClick={() => history.push('/listings')}>Listings</Button>
           { authCtx.isLoggedIn ? 
                   <Box>
                     <Typography variant="p">

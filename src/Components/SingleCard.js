@@ -33,14 +33,13 @@ const SingleCard = ({id, author, created, firstName, lastName}) => {
           Learn More
         </Button>
         {authCtx.isLoggedIn && author === authCtx.user.name ? (
-                <IconButton onClick={() => {history.push(`/cards/update/${id}`)}}>
+              <IconButton onClick={() => {history.push(`/cards/update/${id}`)}}>
                 <EditIcon/>
               </IconButton>
               )
               :
               null
         }
-
       </CardActions>
     </React.Fragment>
   );

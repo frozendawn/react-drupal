@@ -1,17 +1,25 @@
 import React from 'react';
 import { useState,useEffect,useCallback } from 'react';
 
-let logoutTimer;
+let logoutTimer: any;
 
-const AuthContext = React.createContext({
+interface AuthContextInterface {
+    user: object;
+    isLoggedIn: boolean;
+    token: string;
+    login?: (token: string, user: string, expirationTime: string) => void;
+    logout: () => void;
+}
+
+const AuthContext = React.createContext<AuthContextInterface>({
     user: {},
     isLoggedIn: false,
     token: '',
-    login: (token,user) => {},
+    login: () => {},
     logout: () => {}
 })
 
-const calculateRemainingTime = (expirationTime) => {
+const calculateRemainingTime = (expirationTime: string) => {
     const currentTime = new Date().getTime();
     const adjExpirationTime = new Date(expirationTime).getTime();
 
@@ -38,7 +46,7 @@ const retrieveStoredToken = () => {
 
 }
 
-export const AuthContextProvider = (props) => {
+export const AuthContextProvider:React.FC = (props) => {
 
     const tokenData = retrieveStoredToken();
     let initialToken;
@@ -49,12 +57,17 @@ export const AuthContextProvider = (props) => {
     
     const initialName = localStorage.getItem('user')
     const [token, setToken] = useState(initialToken);
-    const [user, setUser] = useState({name: initialName, id:null});
+
+/*     interface User {
+        name: string;
+    } */
+    
+    const [user, setUser] = useState({name: initialName});
 
     const userIsLoggedIn = !!token;
 
     const logoutHandler = useCallback(() => {
-        setUser({name: initialName,id:null});
+        setUser({name: initialName});
         setToken(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -64,10 +77,9 @@ export const AuthContextProvider = (props) => {
         }
     },[initialName]);
 
-    const loginHandler = (token, user, expirationTime) => {
+    const loginHandler = (token: string, user: string, expirationTime: string) => {
         setUser({
             name: user,
-            id: user.uid
         });
         setToken(token)
         localStorage.setItem('token',token); 
@@ -85,7 +97,7 @@ export const AuthContextProvider = (props) => {
         }
     },[tokenData,logoutHandler])
 
-    const contextValue = {
+    const contextValue:AuthContextInterface = {
         user: user,
         token: token,
         isLoggedIn: userIsLoggedIn,
